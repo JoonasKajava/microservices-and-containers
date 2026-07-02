@@ -1,33 +1,104 @@
-use serde::Serialize;
-use zmq::{Context, Message, SocketType::REP};
+use std::env;
 
+use axum::{Json, Router, extract::Query, http::StatusCode, routing::get};
+use chrono::NaiveDate;
+use log::{error, info, warn};
+use serde::{Deserialize, Serialize};
+use tokio::net::TcpListener;
 
-// TODO: Use https://crates.io/crates/tmq
-fn main() {
-    let context = Context::new();
-    let responder = context.socket(REP).unwrap();
+#[tokio::main]
+async fn main() {
+    pretty_env_logger::formatted_timed_builder()
+        .filter_level(log::LevelFilter::Info)
+        .parse_default_env()
+        .init();
 
-    responder.bind("tcp://*:5555").unwrap();
+    let bind_addr = env::var("INVENTORY_BIND_ADDR").unwrap_or("0.0.0.0:3000".to_string());
 
-    let mut msg = Message::new();
-    loop {
-        responder.recv(&mut msg, 0).unwrap();
+    info!("Binding to {}", bind_addr);
 
-        println!("Received request: {}", msg.as_str().unwrap());
+    let app = Router::new().route("/availability", get(availability));
 
-        let equipment = Equipment {
-            id: 1,
-            name: "Sword".to_string(),
-        };
-
-        let response = serde_json::to_string(&equipment).unwrap();
-
-        responder.send(&response, 0).unwrap();
+    match TcpListener::bind(&bind_addr).await {
+        Ok(listener) => match axum::serve(listener, app).await {
+            Ok(()) => todo!(),
+            Err(e) => error!("Failed to serve: {}", e),
+        },
+        Err(e) => error!("Failed to bind {} with error: {}", bind_addr, e),
     }
 }
 
+async fn availability(req: Query<AvailabilityRequest>) -> (StatusCode, Json<AvailabilityResponse>) {
+    info!("Received request: {:?}", req);
+
+    let equipment_db: Vec<Equipment> = vec![Equipment {
+        id: "24549cf0-28b7-4553-8e38-9395a17cdd9e",
+        name: "Laptop",
+        reservations: vec![TimeSpan {
+            start: NaiveDate::from_ymd_opt(2026, 7, 1).unwrap(),
+            end: NaiveDate::from_ymd_opt(2026, 7, 3).unwrap(),
+        }],
+    }];
+
+    match equipment_db.iter().find(|item| item.id == req.guid) {
+        Some(equipment) if equipment.is_available(req.date) => {
+            info!("Equipment {} is available", equipment.name);
+            (StatusCode::OK, Json(AvailabilityResponse::Available))
+        }
+        Some(equipment) => {
+            info!("Equipment {:?} is not available", equipment);
+            (StatusCode::OK, Json(AvailabilityResponse::NotAvailable))
+        },
+        None => {
+            warn!("Equipment with guid {} not found", req.guid);
+            (
+                StatusCode::NOT_FOUND,
+                Json(AvailabilityResponse::EquipmentNotFound),
+            )
+        },
+    }
+}
+
+#[derive(Serialize, Debug)]
+struct Equipment<'a> {
+    id: &'a str,
+    name: &'a str,
+    reservations: Vec<TimeSpan>,
+}
+
+impl<'a> Equipment<'a> {
+    fn is_available(&self, date: NaiveDate) -> bool {
+        self.reservations
+            .iter()
+            .all(|reservation| !reservation.contains(date))
+    }
+}
+
+
+
+#[derive(Serialize, Debug)]
+struct TimeSpan {
+    pub start: NaiveDate,
+    pub end: NaiveDate,
+}
+
+impl TimeSpan {
+    pub fn contains(&self, time: NaiveDate) -> bool {
+        self.start <= time && time <= self.end
+    }
+}
+
+
+#[derive(Serialize, Deserialize, Debug)]
+struct AvailabilityRequest {
+    guid: String,
+    date: NaiveDate,
+}
+
+
 #[derive(Serialize)]
-struct Equipment {
-    id: usize,
-    name: String,
+enum AvailabilityResponse {
+    Available,
+    NotAvailable,
+    EquipmentNotFound,
 }
