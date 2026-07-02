@@ -1,6 +1,10 @@
-{ pkgs, lib, config, inputs, ... }:
-
 {
+  pkgs,
+  lib,
+  config,
+  inputs,
+  ...
+}: {
   # https://devenv.sh/basics/
   # env.GREET = "devenv";
 
@@ -8,7 +12,13 @@
   # packages = [ pkgs.git ];
 
   # https://devenv.sh/languages/
-  languages.rust.enable = true;
+  languages = {
+    rust = {
+      enable = true;
+      channel = "stable";
+      targets = ["x86_64-unknown-linux-gnu" "x86_64-unknown-linux-musl"];
+    };
+  };
 
   # https://devenv.sh/processes/
   # processes.dev.exec = "${lib.getExe pkgs.watchexec} -n -- ls -la";
