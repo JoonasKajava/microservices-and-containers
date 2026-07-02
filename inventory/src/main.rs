@@ -1,6 +1,8 @@
 use serde::Serialize;
 use zmq::{Context, Message, SocketType::REP};
 
+
+// TODO: Use https://crates.io/crates/tmq
 fn main() {
     let context = Context::new();
     let responder = context.socket(REP).unwrap();
