@@ -1,0 +1,11 @@
+services:
+  inventory:
+    build:
+      context: .
+      dockerfile: ./inventory/Dockerfile
+    image: inventory
+  reservation:
+    build:
+      context: .
+      dockerfile: ./reservation/Dockerfile
+    image: reservation
