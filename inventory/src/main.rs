@@ -21,7 +21,7 @@ async fn main() {
 
     match TcpListener::bind(&bind_addr).await {
         Ok(listener) => match axum::serve(listener, app).await {
-            Ok(()) => todo!(),
+            Ok(()) => info!("Shutdown"),
             Err(e) => error!("Failed to serve: {}", e),
         },
         Err(e) => error!("Failed to bind {} with error: {}", bind_addr, e),
