@@ -1,11 +1,13 @@
 services:
   inventory:
     build:
-      context: .
-      dockerfile: ./inventory/Dockerfile
+      context: ./inventory/
+      dockerfile: ./Dockerfile
     image: inventory
   reservation:
+    environment:
+      INVENTORY_ENDPOINT: "http://inventory:3000"
     build:
-      context: .
-      dockerfile: ./reservation/Dockerfile
+      context: ./reservation/
+      dockerfile: ./Dockerfile
     image: reservation
