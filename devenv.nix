@@ -9,7 +9,11 @@
   # env.GREET = "devenv";
 
   # https://devenv.sh/packages/
-  packages = [ pkgs.git pkgs.openssl ];
+  packages = with pkgs; [
+    git
+    openssl
+    cargo-tarpaulin
+  ];
 
   # https://devenv.sh/languages/
   languages = {
