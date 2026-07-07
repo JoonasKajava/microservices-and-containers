@@ -13,6 +13,7 @@
     git
     openssl
     cargo-tarpaulin
+    shadcn
   ];
 
   # https://devenv.sh/languages/
