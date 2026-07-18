@@ -1,5 +1,4 @@
 import Container from "~/components/ui/container"
-import { useAsyncFn } from "react-use"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import {
   Field,
@@ -11,9 +10,9 @@ import { Input } from "~/components/ui/input"
 import { Button } from "~/components/ui/button"
 import { useNavigate } from "react-router"
 import inventoryRepository from "~/lib/repositories/inventoryRepository"
-import { useEffect, useState } from "react"
 import { Spinner } from "~/components/ui/spinner"
 import { toast } from "sonner"
+import { useMutation } from "@tanstack/react-query"
 
 type EquipmentInputs = {
   name: string
@@ -28,29 +27,31 @@ export default function AddEquipment() {
     formState: { errors },
   } = useForm<EquipmentInputs>()
 
-  const [submitState, doSubmit] = useAsyncFn(
-    inventoryRepository.postEquipment,
-    []
-  )
-
-  useEffect(() => {
-    if (submitState.error && !submitState.loading) {
-      toast.error(submitState.error.toString(), {
+  const createEquipmentMutation = useMutation({
+    mutationFn: inventoryRepository.postEquipment,
+    onSuccess: () => {
+      toast.success("Equipment Created", {
+        position: "top-center",
+      })
+      navigate(-1)
+    },
+    onError: (error) => {
+      toast.error("Equipment creation failed", {
         position: "top-center",
         duration: 5000,
       })
-    }
-  }, [submitState.error, submitState.loading])
+    },
+  })
 
   let navigate = useNavigate()
 
   const onSubmit: SubmitHandler<EquipmentInputs> = (data) => {
-    if (submitState.loading) return
+    if (createEquipmentMutation.isPending) return
 
-    doSubmit(data).catch(() => console.log("test"))
+    createEquipmentMutation.mutate(data)
+
   }
 
-  console.log(errors.name)
   return (
     <Container>
       <h1>Add Equipment</h1>
@@ -84,11 +85,11 @@ export default function AddEquipment() {
 
           <Field orientation="horizontal">
             <Button
-              disabled={submitState.loading}
+              disabled={createEquipmentMutation.isPending}
               className="cursor-pointer"
               type="submit"
             >
-              {submitState.loading ? (
+              {createEquipmentMutation.isPending ? (
                 <>
                   <Spinner data-icon="inline-start" />
                   Loading...
@@ -98,7 +99,7 @@ export default function AddEquipment() {
               )}
             </Button>
             <Button
-              disabled={submitState.loading}
+              disabled={createEquipmentMutation.isPending}
               className="cursor-pointer"
               onClick={() => navigate(-1)}
               type="button"

@@ -1,4 +1,6 @@
-import { useAsync } from "react-use"
+import { useAsync, useAsyncFn, useAsyncRetry } from "react-use"
+
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import inventoryRepository from "~/lib/repositories/inventoryRepository"
 import {
   Item,
@@ -16,13 +18,26 @@ import {
   EmptyTitle,
 } from "../ui/empty"
 import { BookDashed } from "lucide-react"
-import { useEffect } from "react"
 import { Button } from "../ui/button"
 
 export default function EquipmentList() {
-  const equipmentReadState = useAsync(inventoryRepository.readEquipment)
 
-  if (equipmentReadState.loading) {
+  const queryClient = useQueryClient();
+
+  const equipmentQuery = useQuery({
+    queryKey: ['equipment'],
+    queryFn: inventoryRepository.readEquipment
+  })
+
+  const deleteEquipmentMutation = useMutation({
+    mutationFn: inventoryRepository.deleteEquipment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['equipment']})
+    }
+  })
+
+
+  if (equipmentQuery.isPending) {
     return (
       <section className="flex flex-col gap-4">
         {[...Array(3)].map((_, i) => (
@@ -44,7 +59,7 @@ export default function EquipmentList() {
         ))}
       </section>
     )
-  } else if (equipmentReadState.value && equipmentReadState.value.length < 1) {
+  } else if (equipmentQuery.data && equipmentQuery.data.length < 1) {
     return (
       <Empty>
         <EmptyHeader>
@@ -56,7 +71,7 @@ export default function EquipmentList() {
         </EmptyHeader>
       </Empty>
     )
-  } else if (equipmentReadState.error !== undefined) {
+  } else if (equipmentQuery.isError) {
     return (
       <Empty>
         <EmptyHeader>
@@ -65,7 +80,7 @@ export default function EquipmentList() {
           </EmptyMedia>
           <EmptyTitle>Issue getting equipment list</EmptyTitle>
           <EmptyDescription>
-            {equipmentReadState.error.toString()}
+            {equipmentQuery.error.message}
           </EmptyDescription>
         </EmptyHeader>
       </Empty>
@@ -73,8 +88,8 @@ export default function EquipmentList() {
   } else {
     return (
       <section className="flex flex-col gap-4">
-        {equipmentReadState.value?.map((value) => (
-          <Item key={value.name} variant="outline">
+        {equipmentQuery.data.map((value) => (
+          <Item key={value.equipmentId} variant="outline">
             <ItemContent>
               <ItemTitle>{value.name}</ItemTitle>
               <ItemDescription className="flex flex-col gap-2">
@@ -82,7 +97,8 @@ export default function EquipmentList() {
               </ItemDescription>
             </ItemContent>
             <ItemActions>
-              <Button>Reserve</Button>
+              <Button disabled={deleteEquipmentMutation.isPending} >Reserve</Button>
+              <Button disabled={deleteEquipmentMutation.isPending} onClick={() => deleteEquipmentMutation.mutate(value.equipmentId)}>Delete</Button>
             </ItemActions>
           </Item>
         ))}

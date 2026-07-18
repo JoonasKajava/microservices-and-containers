@@ -7,17 +7,22 @@ const InventoryRepository = () => ({
       },
       body: JSON.stringify(data),
     })
-    if (!response.ok) throw await response.text();
+    if (!response.ok) throw await response.text()
 
     return await response.json()
   },
-
-  readEquipment: async (): Promise<[{name: string, description: string}]> => {
+  readEquipment: async (): Promise<[{equipmentId: string, name: string; description: string }]> => {
     const response = await fetch("/api/v1/equipment")
 
-    if (!response.ok) throw await response.text();
+    if (!response.ok) throw await response.text()
 
     return await response.json()
+  },
+  deleteEquipment: async (id: string) => {
+    const response = await fetch(`/api/v1/equipment/${id}`, {
+      method: "DELETE",
+    })
+    if (!response.ok) throw await response.text()
   },
 })
 

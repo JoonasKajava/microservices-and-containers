@@ -2,6 +2,7 @@ using Inventory.Context;
 using Inventory.Contracts;
 using Inventory.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Controllers;
 
@@ -38,5 +39,12 @@ public class EquipmentController(
 
 
         return CreatedAtRoute("GetEquipment", equipment);
+    }
+
+    [HttpDelete("{id}", Name = "DeleteEquipment")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        await dbContext.Equipment.Where(e => e.EquipmentId == id).ExecuteDeleteAsync();
+        return NoContent();
     }
 }
