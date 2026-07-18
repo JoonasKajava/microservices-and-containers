@@ -37,6 +37,10 @@
     };
     inventory = {
       exec = "cargo run";
+      restart = {
+        on = "always";
+        max = null;
+      };
       watch = {
         paths = [./inventory];
         extensions = ["rs" "toml"];
@@ -47,6 +51,10 @@
 
     reservation = {
       exec = "cargo run";
+      restart = {
+        on = "always";
+        max = null;
+      };
       watch = {
         paths = [./reservation];
         extensions = ["rs" "toml"];
