@@ -7,7 +7,7 @@ public class Equipment
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public required Guid EquipmentId { get; set; }
+    public Guid EquipmentId { get; set; }
 
     [Required]
     [MaxLength(255)]

@@ -93,7 +93,7 @@
         "localhost:8080" = {
           extraConfig = ''
             handle /api/* {
-              reverse_proxy localhost:3000
+              reverse_proxy localhost:5058
             }
             handle {
               reverse_proxy localhost:5173
