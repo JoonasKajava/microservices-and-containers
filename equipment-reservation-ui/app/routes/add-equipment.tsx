@@ -28,11 +28,17 @@ export default function AddEquipment() {
     formState: { errors },
   } = useForm<EquipmentInputs>()
 
-  const [submitState, doSubmit] = useAsyncFn(inventoryRepository.postEquipment, [])
+  const [submitState, doSubmit] = useAsyncFn(
+    inventoryRepository.postEquipment,
+    []
+  )
 
   useEffect(() => {
     if (submitState.error && !submitState.loading) {
-      toast.error(submitState.error.toString(), {position: "top-center", duration: 5000})
+      toast.error(submitState.error.toString(), {
+        position: "top-center",
+        duration: 5000,
+      })
     }
   }, [submitState.error, submitState.loading])
 
@@ -44,6 +50,7 @@ export default function AddEquipment() {
     doSubmit(data).catch(() => console.log("test"))
   }
 
+  console.log(errors.name)
   return (
     <Container>
       <h1>Add Equipment</h1>
@@ -53,9 +60,18 @@ export default function AddEquipment() {
             <FieldLabel>Equipment Name</FieldLabel>
             <Input
               placeholder="Office Chair..."
-              {...register("name", { required: true })}
+              {...register("name", {
+                required: {
+                  value: true,
+                  message: "Equipment name is required",
+                },
+                maxLength: {
+                  value: 255,
+                  message: "Max length for name is 255",
+                },
+              })}
             />
-            {errors.name && <FieldError>Equipment name is required</FieldError>}
+            {errors.name && <FieldError>{errors.name.message}</FieldError>}
           </Field>
 
           <Field>
