@@ -4,11 +4,12 @@
   config,
   inputs,
   ...
-}: {
+}: rec {
   # https://devenv.sh/basics/
   # env.GREET = "devenv";
 
   env.INVENTORY_ADDR = "http://localhost:3000";
+  env.VITE_INVENTORY_ADDR = env.INVENTORY_ADDR;
 
   # https://devenv.sh/packages/
   packages = with pkgs; [
