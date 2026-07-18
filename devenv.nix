@@ -10,6 +10,7 @@
 
   env.INVENTORY_ADDR = "http://localhost:3000";
   env.VITE_INVENTORY_ADDR = env.INVENTORY_ADDR;
+  env.DATABASE_URL = "postgres://diesel@localhost/equipment_reservation";
 
   # https://devenv.sh/packages/
   packages = with pkgs; [
@@ -17,6 +18,7 @@
     openssl
     cargo-tarpaulin
     shadcn
+    diesel-cli
   ];
 
   # https://devenv.sh/languages/
@@ -69,6 +71,16 @@
 
   # https://devenv.sh/services/
   services = {
+    postgres = {
+      listen_addresses = "localhost";
+      enable = true;
+      initialDatabases = [
+        {
+          name = "equipment_reservation";
+          user = "diesel";
+        }
+      ];
+    };
     caddy = {
       enable = true;
       config = ''
