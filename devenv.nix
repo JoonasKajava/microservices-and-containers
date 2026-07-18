@@ -10,7 +10,7 @@
 
   env.INVENTORY_ADDR = "http://localhost:3000";
   env.VITE_INVENTORY_ADDR = env.INVENTORY_ADDR;
-  env.DATABASE_URL = "postgres://diesel@localhost/equipment_reservation";
+  env.DATABASE_URL = "postgres://admin@localhost/equipment_reservation";
 
   # https://devenv.sh/packages/
   packages = with pkgs; [
@@ -77,7 +77,7 @@
       initialDatabases = [
         {
           name = "equipment_reservation";
-          user = "diesel";
+          user = "admin";
         }
       ];
     };
