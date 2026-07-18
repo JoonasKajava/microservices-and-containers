@@ -8,6 +8,8 @@
   # https://devenv.sh/basics/
   # env.GREET = "devenv";
 
+  env.INVENTORY_ADDR = "http://localhost:3000";
+
   # https://devenv.sh/packages/
   packages = with pkgs; [
     git
@@ -25,11 +27,61 @@
     };
   };
 
+  process.manager.implementation = "process-compose";
+
+  processes = {
+    ui = {
+      exec = "npm run dev";
+      cwd = "./equipment-reservation-ui/";
+    };
+    inventory = {
+      exec = "cargo run";
+      watch = {
+        paths = [./inventory];
+        extensions = ["rs" "toml"];
+        ignore = ["target" "*.log"];
+      };
+      cwd = "./inventory/";
+    };
+
+    reservation = {
+      exec = "cargo run";
+      watch = {
+        paths = [./reservation];
+        extensions = ["rs" "toml"];
+        ignore = ["target" "*.log"];
+      };
+      cwd = "./reservation/";
+    };
+  };
+
   # https://devenv.sh/processes/
   # processes.dev.exec = "${lib.getExe pkgs.watchexec} -n -- ls -la";
 
   # https://devenv.sh/services/
-  # services.postgres.enable = true;
+  services = {
+    caddy = {
+      enable = true;
+      config = ''
+        {
+            http_port 8080
+            https_port 8443
+        }
+      '';
+      virtualHosts = {
+        "localhost:8080" = {
+          extraConfig = ''
+            handle /api/* {
+              reverse_proxy localhost:3000
+            }
+            handle {
+              reverse_proxy localhost:5173
+            }
+          '';
+        };
+      };
+    };
+  };
 
   # https://devenv.sh/scripts/
   # scripts.hello.exec = ''

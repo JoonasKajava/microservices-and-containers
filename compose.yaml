@@ -8,7 +8,7 @@ services:
       - equipment-reservation-net
   reservation:
     environment:
-      INVENTORY_ENDPOINT: "http://inventory:3000"
+      INVENTORY_ADDR: "http://inventory:3000"
     build:
       context: ./reservation/
       dockerfile: ./Dockerfile

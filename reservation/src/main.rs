@@ -15,7 +15,7 @@ async fn main() -> Result<()> {
         .init();
 
     let inventory_addr =
-        env::var("INVENTORY_ENDPOINT").unwrap_or("http://localhost:3000".to_string());
+        env::var("INVENTORY_ADDR").unwrap_or("http://localhost:3000".to_string());
 
     let client = Client::new();
     loop {
@@ -32,7 +32,7 @@ async fn main() -> Result<()> {
         info!("Requesting availability {:?}", test);
 
         let res = match client
-            .get(format!("{}/availability", inventory_addr))
+            .get(format!("{}/api/availability", inventory_addr))
             .query(&test)
             .send()
             .await

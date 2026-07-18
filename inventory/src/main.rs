@@ -17,7 +17,7 @@ async fn main() {
 
     info!("Binding to {}", bind_addr);
 
-    let app = Router::new().route("/availability", get(availability));
+    let app = Router::new().route("/api/availability", get(availability));
 
     match TcpListener::bind(&bind_addr).await {
         Ok(listener) => match axum::serve(listener, app).await {
