@@ -1,12 +1,13 @@
 mod availability;
 mod equipment;
 mod models;
+mod repository;
+mod schema;
 
 use std::env;
 
 use axum::{
-    Router,
-    routing::{get, post},
+    Router, http::StatusCode, response::{IntoResponse, Response}, routing::{get, post}
 };
 use log::{error, info};
 use tokio::net::TcpListener;
@@ -22,8 +23,10 @@ async fn main() {
 
     info!("Binding to {}", bind_addr);
 
+    // TODO: Improve error handling
     let app = Router::new()
         .route("/api/v1/availability", get(availability::get_availability))
+        .route("/api/v1/equipment", get(equipment::get_equipment))
         .route("/api/v1/equipment", post(equipment::post_equipment));
 
     match TcpListener::bind(&bind_addr).await {
@@ -32,5 +35,22 @@ async fn main() {
             Err(e) => error!("Failed to serve: {}", e),
         },
         Err(e) => error!("Failed to bind {} with error: {}", bind_addr, e),
+    }
+}
+
+#[derive(Debug)]
+enum AppError {
+    FailedToReadEquipment,
+    FailedToCreateEquipment,
+    DatabaseConnectionError
+}
+
+impl IntoResponse for AppError {
+    fn into_response(self) -> Response {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("Something went wrong: {:?}", self),
+        )
+            .into_response()
     }
 }

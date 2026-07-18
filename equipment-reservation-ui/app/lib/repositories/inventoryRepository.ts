@@ -11,6 +11,14 @@ const InventoryRepository = () => ({
 
     return await response.json()
   },
+
+  readEquipment: async (): Promise<[{name: string, description: string}]> => {
+    const response = await fetch("/api/v1/equipment")
+
+    if (!response.ok) throw await response.text();
+
+    return await response.json()
+  },
 })
 
 const inventoryRepository = InventoryRepository()
