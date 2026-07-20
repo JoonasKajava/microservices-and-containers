@@ -96,8 +96,12 @@
       virtualHosts = {
         "localhost:8080" = {
           extraConfig = ''
-            handle /api/* {
+            handle /api/v1/equipment* {
               reverse_proxy localhost:5058
+            }
+
+            handle /api/v1/reservation* {
+              reverse_proxy localhost:5264
             }
             handle {
               reverse_proxy localhost:5173
