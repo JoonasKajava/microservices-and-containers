@@ -18,7 +18,7 @@
     openssl
     cargo-tarpaulin
     shadcn
-    diesel-cli
+    sea-orm-cli
   ];
 
   # https://devenv.sh/languages/
