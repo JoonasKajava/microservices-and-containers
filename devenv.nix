@@ -76,7 +76,11 @@
       enable = true;
       initialDatabases = [
         {
-          name = "equipment_reservation";
+          name = "inventory";
+          user = "admin";
+        }
+        {
+          name = "reservation";
           user = "admin";
         }
       ];
