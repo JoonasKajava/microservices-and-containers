@@ -1,24 +1,27 @@
 ﻿using Inventory.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Inventory.Context;
 
 public partial class InventoryDbContext : DbContext
 {
+    private InventoryOptions _inventoryOptions;
     public DbSet<Equipment> Equipment { get; set; }
 
-    public InventoryDbContext()
+    public InventoryDbContext(InventoryOptions inventoryOptions)
     {
+        _inventoryOptions = inventoryOptions;
     }
 
-    public InventoryDbContext(DbContextOptions<InventoryDbContext> options)
+    public InventoryDbContext(DbContextOptions<InventoryDbContext> options, IOptions<InventoryOptions> inventoryOptions)
         : base(options)
     {
+        _inventoryOptions = inventoryOptions.Value;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https: //go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=equipment_reservation;Username=admin;");
+        => optionsBuilder.UseNpgsql(_inventoryOptions.DatabaseUrl);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

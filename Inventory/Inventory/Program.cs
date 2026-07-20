@@ -1,3 +1,4 @@
+using Inventory;
 using Inventory.Context;
 using Inventory.Extensions;
 
@@ -10,6 +11,11 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<InventoryDbContext>();
+
+builder.Services.AddOptions<InventoryOptions>()
+    .Bind(builder.Configuration.GetSection(InventoryOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
 var app = builder.Build();
 

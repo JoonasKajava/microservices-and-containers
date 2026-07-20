@@ -3,6 +3,7 @@ using Inventory.Contracts;
 using Inventory.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Inventory.Controllers;
 
@@ -10,7 +11,8 @@ namespace Inventory.Controllers;
 [Route("/api/v1/[controller]")]
 public class EquipmentController(
     ILogger<EquipmentController> logger,
-    InventoryDbContext dbContext
+    InventoryDbContext dbContext,
+    IOptions<InventoryOptions> options
 ) : ControllerBase
 {
     [HttpGet(Name = "GetEquipment")]
@@ -25,6 +27,7 @@ public class EquipmentController(
     {
         if (!ModelState.IsValid)
         {
+
             return BadRequest(ModelState);
         }
 
@@ -44,6 +47,7 @@ public class EquipmentController(
     [HttpDelete("{id}", Name = "DeleteEquipment")]
     public async Task<IActionResult> Delete(Guid id)
     {
+        // TODO: Check reservations?
         await dbContext.Equipment.Where(e => e.EquipmentId == id).ExecuteDeleteAsync();
         return NoContent();
     }
