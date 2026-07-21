@@ -8,4 +8,8 @@ public class ReservationOptions
 
     [Required]
     public required string DatabaseUrl { get; set; }
+
+
+    [Required]
+    public required string InventoryServiceUrl { get; set; }
 }

@@ -1,12 +1,14 @@
 import React, { useCallback } from "react"
 import { App, Button, DatePicker, Form } from "antd"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import reservationRepository from "~/lib/repositories/reservationRepository"
 import dayjs from "dayjs"
+import type { ApiError } from "~/lib/types"
 
 const NewReservation = (props: { equipmentId: string }) => {
   const [form] = Form.useForm()
   const { notification } = App.useApp()
+  const queryClient = useQueryClient()
 
   const createReservationMutation = useMutation({
     mutationFn: reservationRepository.postReservation,
@@ -17,10 +19,22 @@ const NewReservation = (props: { equipmentId: string }) => {
         duration: 5,
       })
       form.resetFields()
+      queryClient
+        .invalidateQueries({
+          queryKey: ["reservations", props.equipmentId],
+        })
+        .catch(console.error)
     },
-    onError: () => {
+    onError: (error: ApiError) => {
+      console.log(error);
+      let message = "Reservation creation failed";
+
+      if (error.status === 409) {
+        message = "Reservation failed because of overlapping reservation."
+      }
+
       notification.error({
-        title: "Reservation creation failed",
+        title: message,
         placement: "top",
         duration: 5,
       })

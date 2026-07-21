@@ -6,7 +6,7 @@ const ReservationRepository = () => ({
     equipmentId: string
     startTime: Dayjs
     endTime: Dayjs
-  }) => {
+  }): Promise<Reservation> => {
     const response = await fetch("/api/v1/reservations", {
       method: "POST",
       headers: {
@@ -14,7 +14,7 @@ const ReservationRepository = () => ({
       },
       body: JSON.stringify(data),
     })
-    if (!response.ok) throw await response.text()
+    if (!response.ok) throw await response.json()
 
     return await response.json()
   },

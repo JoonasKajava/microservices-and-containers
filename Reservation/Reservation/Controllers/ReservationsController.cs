@@ -1,20 +1,23 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Reservation.Context;
 using Reservation.Contracts;
+using Reservation.Repositories;
 
 namespace Reservation.Controllers;
 
 [ApiController]
 [Route("/api/v1/[controller]")]
-public class ReservationsController(ReservationDbContext dbContext, ILogger<ReservationsController> logger)
+public class ReservationsController(
+    ILogger<ReservationsController> logger,
+    IReservationsRepository reservationsRepository,
+    IInventoryRepository inventoryRepository
+)
     : ControllerBase
 {
     [HttpGet(Name = "GetEquipmentReservations")]
     public IEnumerable<Entities.Reservation> Get([FromQuery] GetEquipmentReservations getEquipmentReservations)
     {
         logger.LogInformation("Getting equipment reservations for {id}", getEquipmentReservations.EquipmentId);
-        return dbContext.Reservations;
+        return reservationsRepository.GetReservationsForEquipment(getEquipmentReservations.EquipmentId);
     }
 
     [HttpPost(Name = "CreateReservation")]
@@ -25,8 +28,24 @@ public class ReservationsController(ReservationDbContext dbContext, ILogger<Rese
             return BadRequest(ModelState);
         }
 
-        // TODO: Check that equipment exists
-        // TODO: Check overlapping reservations
+        var equipment = await inventoryRepository.GetEquipmentByIdAsync(createReservation.EquipmentId);
+
+        if (equipment is null)
+        {
+            return NotFound($"Equipment with id {createReservation.EquipmentId} not found");
+        }
+
+        var hasOverlappingReservations = reservationsRepository.GetOverlappingReservationsForEquipment(
+            createReservation.EquipmentId,
+            createReservation.StartTime,
+            createReservation.EndTime
+        ).Any();
+
+        if (hasOverlappingReservations)
+        {
+            return Conflict();
+        }
+
 
         var reservation = new Entities.Reservation
         {
@@ -35,9 +54,7 @@ public class ReservationsController(ReservationDbContext dbContext, ILogger<Rese
             EndTime = createReservation.EndTime
         };
 
-        dbContext.Reservations.Add(reservation);
-
-        await dbContext.SaveChangesAsync();
+        await reservationsRepository.CreateReservationAsync(reservation);
 
         return CreatedAtRoute("CreateReservation", reservation);
     }
@@ -45,7 +62,7 @@ public class ReservationsController(ReservationDbContext dbContext, ILogger<Rese
     [HttpDelete("{id}", Name = "DeleteReservation")]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
-        await dbContext.Reservations.Where(e => e.ReservationId == id).ExecuteDeleteAsync();
+        await reservationsRepository.DeleteReservationAsync(id);
         return NoContent();
     }
 }
