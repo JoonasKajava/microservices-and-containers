@@ -1,4 +1,3 @@
-import Container from "~/components/ui/container"
 import { useNavigate } from "react-router"
 import inventoryRepository from "~/lib/repositories/inventoryRepository"
 import { useMutation } from "@tanstack/react-query"
@@ -20,7 +19,7 @@ export default function AddEquipment() {
       })
       navigate(-1)
     },
-    onError: (error) => {
+    onError: () => {
       notification.error({
         title: "Equipment creation failed",
         placement: "top",
@@ -39,7 +38,7 @@ export default function AddEquipment() {
   }
 
   return (
-    <Container>
+    <>
       <Title>Add Equipment</Title>
       <Form form={form} onFinish={onSubmit}>
         <Form.Item
@@ -89,6 +88,6 @@ export default function AddEquipment() {
           </Space>
         </Form.Item>
       </Form>
-    </Container>
+    </>
   )
 }

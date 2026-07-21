@@ -43,9 +43,6 @@ export default function EquipmentList() {
                 <NavLink to={`/view-equipment/${item.equipmentId}`}>
                   <Button>View</Button>
                 </NavLink>,
-                <NavLink to={`/view-equipment/${item.equipmentId}`}>
-                  <Button>Reserve</Button>
-                </NavLink>,
                 <Button
                   disabled={deleteEquipmentMutation.isPending}
                   onClick={() =>

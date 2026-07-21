@@ -2,6 +2,7 @@ import React, { useCallback } from "react"
 import { App, Button, DatePicker, Form } from "antd"
 import { useMutation } from "@tanstack/react-query"
 import reservationRepository from "~/lib/repositories/reservationRepository"
+import dayjs from "dayjs"
 
 const NewReservation = (props: { equipmentId: string }) => {
   const [form] = Form.useForm()
@@ -15,7 +16,7 @@ const NewReservation = (props: { equipmentId: string }) => {
         placement: "top",
         duration: 5,
       })
-      form.resetFields();
+      form.resetFields()
     },
     onError: () => {
       notification.error({
@@ -26,13 +27,16 @@ const NewReservation = (props: { equipmentId: string }) => {
     },
   })
 
-  const onFinish = useCallback((values: any) => {
-    createReservationMutation.mutate({
-      equipmentId: props.equipmentId,
-      startTime: values.timespan[0],
-      endTime: values.timespan[1]
-    })
-  }, [createReservationMutation, props.equipmentId])
+  const onFinish = useCallback(
+    (values: any) => {
+      createReservationMutation.mutate({
+        equipmentId: props.equipmentId,
+        startTime: values.timespan[0],
+        endTime: values.timespan[1],
+      })
+    },
+    [createReservationMutation, props.equipmentId]
+  )
 
   return (
     <Form form={form} onFinish={onFinish}>
@@ -41,10 +45,16 @@ const NewReservation = (props: { equipmentId: string }) => {
         label="Reservation Timespan"
         rules={[{ required: true }]}
       >
-        <DatePicker.RangePicker showTime />
+        <DatePicker.RangePicker minDate={dayjs()} showTime />
       </Form.Item>
       <Form.Item>
-        <Button disabled={createReservationMutation.isPending} type="primary" htmlType="submit">Submit</Button>
+        <Button
+          disabled={createReservationMutation.isPending}
+          type="primary"
+          htmlType="submit"
+        >
+          Submit
+        </Button>
       </Form.Item>
     </Form>
   )

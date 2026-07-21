@@ -1,5 +1,4 @@
 import React, { useMemo } from "react"
-import Container from "~/components/ui/container"
 import { useParams } from "react-router"
 import { useQuery } from "@tanstack/react-query"
 import inventoryRepository from "~/lib/repositories/inventoryRepository"
@@ -43,7 +42,7 @@ const ViewEquipment = () => {
   }, [equipmentQuery.isSuccess, equipmentQuery.data])
 
   return (
-    <Container>
+    <>
       <Space orientation="vertical">
         <Title>View Equipment</Title>
         {(equipmentQuery.isLoading || equipmentQuery.isSuccess) && (
@@ -57,7 +56,7 @@ const ViewEquipment = () => {
         <Divider />
         <ListReservations equipmentId={equipmentId!} />
       </Space>
-    </Container>
+    </>
   )
 }
 
