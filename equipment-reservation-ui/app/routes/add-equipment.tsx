@@ -2,38 +2,36 @@ import Container from "~/components/ui/container"
 import { useNavigate } from "react-router"
 import inventoryRepository from "~/lib/repositories/inventoryRepository"
 import { useMutation } from "@tanstack/react-query"
-import Title from "antd/lib/typography/Title"
-import { Button, Form, Input, notification, Space } from "antd"
-import TextArea from "antd/lib/input/TextArea"
+import { App, Button, Form, Input, Space } from "antd"
+import { Title } from "~/components/ui/Typography"
 
 export default function AddEquipment() {
-
-  const [api, contextHolder] = notification.useNotification();
+  const { notification } = App.useApp()
 
   const [form] = Form.useForm()
 
   const createEquipmentMutation = useMutation({
     mutationFn: inventoryRepository.postEquipment,
     onSuccess: () => {
-      api.success({
+      notification.success({
         title: "Equipment created successfully",
         placement: "top",
         duration: 5,
-      });
+      })
       navigate(-1)
     },
     onError: (error) => {
-      api.error({
+      notification.error({
         title: "Equipment creation failed",
         placement: "top",
         duration: 5,
-      });
+      })
     },
   })
 
   let navigate = useNavigate()
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: any) => {
     console.log(data)
     if (createEquipmentMutation.isPending) return
 
@@ -43,7 +41,6 @@ export default function AddEquipment() {
   return (
     <Container>
       <Title>Add Equipment</Title>
-
       <Form form={form} onFinish={onSubmit}>
         <Form.Item
           name="name"
@@ -71,9 +68,8 @@ export default function AddEquipment() {
             },
           ]}
         >
-          <TextArea placeholder="Ergonomic chair..." />
+          <Input.TextArea placeholder="Ergonomic chair..." />
         </Form.Item>
-        ,
         <Form.Item>
           <Space>
             <Button

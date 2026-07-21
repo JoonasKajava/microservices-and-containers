@@ -7,6 +7,8 @@ import {
   isRouteErrorResponse,
 } from "react-router"
 
+import { App as AntdApp } from "antd"
+
 import type { Route } from "./+types/root"
 import "./app.css"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
@@ -23,11 +25,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <QueryClientProvider client={queryClient}>
-          {children}
-          <ScrollRestoration />
-          <Scripts />
-        </QueryClientProvider>
+        <AntdApp>
+          <QueryClientProvider client={queryClient}>
+            {children}
+            <ScrollRestoration />
+            <Scripts />
+          </QueryClientProvider>
+        </AntdApp>
       </body>
     </html>
   )
