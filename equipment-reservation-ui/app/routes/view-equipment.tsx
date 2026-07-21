@@ -4,6 +4,8 @@ import { useParams } from "react-router"
 import { useQuery } from "@tanstack/react-query"
 import inventoryRepository from "~/lib/repositories/inventoryRepository"
 import { Skeleton } from "~/components/ui/skeleton"
+import SimpleError from "~/components/widgets/SimpleError"
+import { FieldGroup, FieldLegend, FieldSet } from "~/components/ui/field"
 
 const ViewEquipment = () => {
   const { equipmentId } = useParams<{ equipmentId: string }>()
@@ -16,7 +18,7 @@ const ViewEquipment = () => {
   const property = useCallback(
     (value: string) => {
       if (equipmentQuery.isPending) {
-        return <Skeleton className="h-4 w-[250px]" />
+        return <Skeleton className="h-4 w-62.5" />
       }
       if (!equipmentQuery.isSuccess) return <></>
 
@@ -27,12 +29,28 @@ const ViewEquipment = () => {
 
   return (
     <Container>
-      <h1>View Equipment</h1>
-      <p>Equipment Id: {equipmentId}</p>
-      <p>Equipment Name: {property(equipmentQuery.data?.name!)}</p>
-      <p>
-        Equipment Description: {property(equipmentQuery.data?.description!)}
-      </p>
+      <FieldSet>
+        <FieldLegend>View Equipment</FieldLegend>
+        <FieldGroup>
+          <FieldLegend>Equipment Id</FieldLegend>
+          <p>{equipmentId}</p>
+        </FieldGroup>
+      </FieldSet>
+      {equipmentQuery.isError && (
+        <SimpleError
+          title="Issue getting equipment details"
+          description={equipmentQuery.error.message}
+        />
+      )}
+
+      {(equipmentQuery.isPending || equipmentQuery.isSuccess) && (
+        <>
+          <p>Equipment Name: {property(equipmentQuery.data?.name!)}</p>
+          <p>
+            Equipment Description: {property(equipmentQuery.data?.description!)}
+          </p>
+        </>
+      )}
     </Container>
   )
 }
