@@ -22,6 +22,16 @@ public class EquipmentController(
         return dbContext.Equipment;
     }
 
+    [HttpGet("{id}", Name = "GetEquipmentById")]
+    public async Task<ActionResult<Equipment>> Get(Guid id)
+    {
+        var equipment = await dbContext.Equipment.FindAsync(id);
+
+        if (equipment is null) return NotFound();
+
+        return equipment;
+    }
+
     [HttpPost(Name = "CreateEquipment")]
     public async Task<IActionResult> Post(CreateEquipment createEquipment)
     {

@@ -1,3 +1,5 @@
+import type { Equipment } from "~/lib/types"
+
 const InventoryRepository = () => ({
   postEquipment: async (data: { name: string; description: string }) => {
     const response = await fetch("/api/v1/equipment", {
@@ -22,10 +24,10 @@ const InventoryRepository = () => ({
   },
   readEquipmentById: async (
     id: string
-  ): Promise<{ equipmentId: string; name: string; description: string }> => {
+  ): Promise<Equipment> => {
     const response = await fetch("/api/v1/equipment/" + id)
 
-    if (!response.ok) throw await response.text()
+    if (!response.ok) throw await response.json()
 
     return await response.json()
   },

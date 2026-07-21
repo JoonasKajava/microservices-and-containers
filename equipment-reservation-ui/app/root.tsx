@@ -9,8 +9,6 @@ import {
 
 import type { Route } from "./+types/root"
 import "./app.css"
-import "./typeset.css"
-import { Toaster } from "sonner"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 const queryClient = new QueryClient()
@@ -27,7 +25,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <QueryClientProvider client={queryClient}>
           {children}
-          <Toaster />
           <ScrollRestoration />
           <Scripts />
         </QueryClientProvider>
