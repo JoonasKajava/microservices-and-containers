@@ -4,6 +4,13 @@ export interface Equipment {
   description: string
 }
 
+export interface Reservation {
+  equipmentId: string,
+  reservationId: string,
+  startTime: string,
+  endTime: string
+}
+
 export interface ApiError {
   status: number,
   title: string,

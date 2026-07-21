@@ -8,8 +8,8 @@ public class CreateReservation
     public required Guid EquipmentId { get; set; }
 
     [Required]
-    public DateTimeOffset StartTime { get; set; }
+    public required DateTimeOffset StartTime { get; set; }
 
     [Required]
-    public DateTimeOffset EndTime { get; set; }
+    public required DateTimeOffset EndTime { get; set; }
 }
