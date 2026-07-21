@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Reservation.Context;
 using Reservation.Contracts;
 
@@ -17,7 +18,7 @@ public class ReservationsController(ReservationDbContext dbContext, ILogger<Rese
     }
 
     [HttpPost(Name = "CreateReservation")]
-    public async Task<IActionResult> Post([FromQuery] CreateReservation createReservation)
+    public async Task<IActionResult> Post([FromBody] CreateReservation createReservation)
     {
         if (!ModelState.IsValid)
         {
@@ -39,5 +40,12 @@ public class ReservationsController(ReservationDbContext dbContext, ILogger<Rese
         await dbContext.SaveChangesAsync();
 
         return CreatedAtRoute("CreateReservation", reservation);
+    }
+
+    [HttpDelete("{id}", Name = "DeleteReservation")]
+    public async Task<IActionResult> Delete([FromRoute] Guid id)
+    {
+        await dbContext.Reservations.Where(e => e.ReservationId == id).ExecuteDeleteAsync();
+        return NoContent();
     }
 }
