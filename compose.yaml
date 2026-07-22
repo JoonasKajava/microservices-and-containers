@@ -1,20 +1,26 @@
 services:
-  inventory:
-    build:
-      context: ./inventory/
-      dockerfile: ./Dockerfile
-    image: inventory
-    networks:
-      - equipment-reservation-net
-  reservation:
+  tinyauth:
+    image: ghcr.io/tinyauthapp/tinyauth:v5
+    restart: unless-stopped
     environment:
-      INVENTORY_ADDR: "http://inventory:3000"
-    build:
-      context: ./reservation/
-      dockerfile: ./Dockerfile
-    image: reservation
-    networks:
-      - equipment-reservation-net
+      - TINYAUTH_APPURL=http://auth.equipment.localhost:8080
+      - TINYAUTH_AUTH_USERS=admin:$$2b$$10$$zOkDdAK2YBM1zEzEXIOrGOixr3gZdvNB7Rz8dBYF1Xbc0/wU8hFRq
+  caddy:
+    image: caddy
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - $PWD/conf:/etc/caddy
+      - $PWD/site:/srv
+      - caddy_data:/data
+      - caddy_config:/config
+volumes:
+  caddy_data:
+  caddy_config:
 networks:
   equipment-reservation-net:
     driver: bridge
