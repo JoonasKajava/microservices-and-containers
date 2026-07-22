@@ -12,7 +12,7 @@ namespace Inventory.Controllers;
 public class EquipmentController(
     ILogger<EquipmentController> logger,
     InventoryDbContext dbContext,
-    IOptions<InventoryOptions> options
+    IInventoryPublisher inventoryPublisher
 ) : ControllerBase
 {
     [HttpGet(Name = "GetEquipment")]
@@ -57,8 +57,8 @@ public class EquipmentController(
     [HttpDelete("{id}", Name = "DeleteEquipment")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        // TODO: Check reservations?
         await dbContext.Equipment.Where(e => e.EquipmentId == id).ExecuteDeleteAsync();
+        await inventoryPublisher.EquipmentDeleted(id);
         return NoContent();
     }
 }

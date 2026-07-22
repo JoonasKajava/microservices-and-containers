@@ -4,13 +4,10 @@ namespace Inventory;
 
 public class InventoryOptions
 {
-   public static string SectionName => "Inventory";
+    public static string SectionName => "Inventory";
 
-   [Required]
-   public required string DatabaseUrl { get; set; }
+    [Required]
+    public required string DatabaseUrl { get; set; }
 
-   [Required]
-   public required string ReservationStatePubAddr { get; set; }
-
-   public string ReservationStatePubTopic { get; set; } = "reservation";
+    public string InventoryPublisherBindAddr { get; set; } = "tcp://127.0.0.1:5556";
 }
