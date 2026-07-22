@@ -12,4 +12,6 @@ public class ReservationOptions
 
     [Required]
     public required string InventoryServiceUrl { get; set; }
+
+    public string PublisherSocketBind { get; set; } = "tcp://127.0.0.1:5556";
 }

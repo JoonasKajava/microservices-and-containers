@@ -8,7 +8,8 @@
       "applicationUrl": "http://localhost:5058",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "Inventory__DatabaseUrl": "Host=localhost;Port=5432;Database=inventory;Username=admin"
+        "Inventory__DatabaseUrl": "Host=localhost;Port=5432;Database=inventory;Username=admin",
+        "Inventory__ReservationStatePubAddr": "tcp://localhost:5556"
       }
     },
     "https": {

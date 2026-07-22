@@ -8,4 +8,9 @@ public class InventoryOptions
 
    [Required]
    public required string DatabaseUrl { get; set; }
+
+   [Required]
+   public required string ReservationStatePubAddr { get; set; }
+
+   public string ReservationStatePubTopic { get; set; } = "reservation";
 }
