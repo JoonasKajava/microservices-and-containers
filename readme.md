@@ -1,5 +1,9 @@
 # Equipment Reservation System
 
+## TODO:
+- Aspire dashboard
+- OpenID for Inventory and reservation
+
 ## Diagram
 
 ```mermaid
