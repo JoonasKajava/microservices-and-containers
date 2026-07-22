@@ -21,7 +21,10 @@ builder.Services.AddOptions<InventoryOptions>()
 
 var app = builder.Build();
 
-app.MigrateDatabase();
+if (!app.Environment.IsEnvironment("Testing"))
+{
+    app.MigrateDatabase();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -36,3 +39,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program {}

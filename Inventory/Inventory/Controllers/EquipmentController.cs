@@ -1,9 +1,7 @@
-using Inventory.Context;
 using Inventory.Contracts;
 using Inventory.Entities;
+using Inventory.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Inventory.Controllers;
 
@@ -11,7 +9,7 @@ namespace Inventory.Controllers;
 [Route("/api/v1/[controller]")]
 public class EquipmentController(
     ILogger<EquipmentController> logger,
-    InventoryDbContext dbContext,
+    IInventoryRepository inventoryRepository,
     IInventoryPublisher inventoryPublisher
 ) : ControllerBase
 {
@@ -19,13 +17,13 @@ public class EquipmentController(
     public IEnumerable<Equipment> Get()
     {
         logger.LogInformation("Getting equipment");
-        return dbContext.Equipment;
+        return inventoryRepository.GetEquipments();
     }
 
     [HttpGet("{id}", Name = "GetEquipmentById")]
     public async Task<ActionResult<Equipment>> Get(Guid id)
     {
-        var equipment = await dbContext.Equipment.FindAsync(id);
+        var equipment = await inventoryRepository.GetEquipmentByIdAsync(id);
 
         if (equipment is null) return NotFound();
 
@@ -47,9 +45,7 @@ public class EquipmentController(
             Description = createEquipment.Description
         };
 
-        dbContext.Equipment.Add(equipment);
-        await dbContext.SaveChangesAsync();
-
+        await inventoryRepository.CreateEquipmentAsync(equipment);
 
         return CreatedAtRoute("GetEquipment", equipment);
     }
@@ -57,7 +53,7 @@ public class EquipmentController(
     [HttpDelete("{id}", Name = "DeleteEquipment")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        await dbContext.Equipment.Where(e => e.EquipmentId == id).ExecuteDeleteAsync();
+        await inventoryRepository.DeleteEquipmentByIdAsync(id);
         await inventoryPublisher.EquipmentDeleted(id);
         return NoContent();
     }
