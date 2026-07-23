@@ -1,9 +1,5 @@
 https://auth.equipment.localhost {
-	header {
-		Access-Control-Allow-Origin: https://equipment.localhost
-		Access-Control-Allow-Credentials: true
-	}
-	reverse_proxy tinyauth:3000
+	reverse_proxy pocket-id:1411
 }
 
 https://equipment.localhost {

@@ -2,6 +2,9 @@ services:
   ui:
     networks:
       - internal
+    volumes:
+      - ./equipment-reservation-ui/:/app
+      - /app/node_modules
     build:
       context: ./equipment-reservation-ui
       dockerfile: Dockerfile.dev

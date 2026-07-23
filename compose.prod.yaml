@@ -1,18 +1,14 @@
 services:
-  tinyauth:
-    image: ghcr.io/tinyauthapp/tinyauth:v5
+  pocket-id:
+    image: pocketid/pocket-id:v2
+    restart: unless-stopped
     networks:
       - internal
-    restart: unless-stopped
+    env_file: .env
+    ports:
+      - 1411:1411
     volumes:
-      - ./tinyauth_data:/data
-    environment:
-      - TINYAUTH_APPURL=https://auth.equipment.localhost
-      - TINYAUTH_AUTH_USERS=admin:$$2b$$10$$zOkDdAK2YBM1zEzEXIOrGOixr3gZdvNB7Rz8dBYF1Xbc0/wU8hFRq
-      - TINYAUTH_OIDC_CLIENTS_EQUIPMENT_CLIENTID=420a32cb-5100-4bee-b770-e273e059e326
-      - TINYAUTH_OIDC_CLIENTS_EQUIPMENT_CLIENTSECRET=ta-KaONTC5Fq0cvH8YiOJhmdjoLPU9EZpQ3AHTmStjMJ5sunvdvQifCoYo5C3FLd
-      - TINYAUTH_OIDC_CLIENTS_EQUIPMENT_NAME=Equipment
-      - TINYAUTH_OIDC_CLIENTS_EQUIPMENT_TRUSTEDREDIRECTURIS=https://equipment.localhost
+      - "./pocket-id:/app/data"
   caddy:
     image: caddy
     restart: unless-stopped

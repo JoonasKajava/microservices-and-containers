@@ -8,7 +8,7 @@ import {
   ScrollRestoration,
 } from "react-router"
 
-import { App as AntdApp, Button } from "antd"
+import { App as AntdApp, Button, Card, Space } from "antd"
 
 import type { Route } from "./+types/root"
 import "./app.css"
@@ -27,6 +27,9 @@ const oidcConfig = {
   authority: import.meta.env.VITE_OIDC_AUTHORITY,
   client_id: import.meta.env.VITE_OIDC_CLIENT_ID,
   redirect_uri: import.meta.env.VITE_OIDC_REDIRECT_URI,
+  response_type: "code",
+  scope: "openid profile email",
+  disablePKCE: false
 } satisfies AuthProviderProps
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -55,7 +58,10 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
     <AntdApp>
       <QueryClientProvider client={queryClient}>
         <Container>
-          <Button onClick={() => auth.signinRedirect()}>Login</Button>
+          <Space>
+            <Button onClick={() => auth.signinRedirect()}>Login</Button>
+            <Button onClick={() => auth.signoutRedirect()}>Logout</Button>
+          </Space>
           <NavLink className="block" to={"/"}>
             <Button>Home</Button>
           </NavLink>
