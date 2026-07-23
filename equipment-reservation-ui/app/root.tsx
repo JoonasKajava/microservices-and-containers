@@ -14,8 +14,20 @@ import type { Route } from "./+types/root"
 import "./app.css"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import Container from "~/components/ui/container"
+import {
+  AuthProvider,
+  type AuthProviderProps,
+  useAuth,
+} from "react-oidc-context"
+import { useEffect } from "react"
 
 const queryClient = new QueryClient()
+
+const oidcConfig = {
+  authority: import.meta.env.VITE_OIDC_AUTHORITY,
+  client_id: import.meta.env.VITE_OIDC_CLIENT_ID,
+  redirect_uri: import.meta.env.VITE_OIDC_REDIRECT_URI,
+} satisfies AuthProviderProps
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -27,20 +39,32 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <AntdApp>
-          <QueryClientProvider client={queryClient}>
-            <Container>
-              <NavLink className="block" to={"/"}>
-                <Button>Home</Button>
-              </NavLink>
-              {children}
-            </Container>
-            <ScrollRestoration />
-            <Scripts />
-          </QueryClientProvider>
-        </AntdApp>
+        <AuthProvider {...oidcConfig}>
+          <Wrapper>{children}</Wrapper>
+        </AuthProvider>
       </body>
     </html>
+  )
+}
+
+const Wrapper = ({ children }: { children: React.ReactNode }) => {
+  const auth = useAuth()
+  console.log(auth)
+  console.log(oidcConfig)
+  return (
+    <AntdApp>
+      <QueryClientProvider client={queryClient}>
+        <Container>
+          <Button onClick={() => auth.signinRedirect()}>Login</Button>
+          <NavLink className="block" to={"/"}>
+            <Button>Home</Button>
+          </NavLink>
+          {children}
+        </Container>
+        <ScrollRestoration />
+        <Scripts />
+      </QueryClientProvider>
+    </AntdApp>
   )
 }
 

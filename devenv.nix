@@ -10,6 +10,10 @@
 
   env.INVENTORY_ADDR = "http://localhost:3000";
   env.VITE_INVENTORY_ADDR = env.INVENTORY_ADDR;
+
+  env.VITE_OIDC_AUTHORITY = "https://auth.equipment.localhost";
+  env.VITE_OIDC_CLIENT_ID = "420a32cb-5100-4bee-b770-e273e059e326";
+  env.VITE_OIDC_REDIRECT_URI = "https://equipment.localhost";
   env.DATABASE_URL = "postgres://admin@localhost/equipment_reservation";
 
   # https://devenv.sh/packages/
@@ -36,33 +40,6 @@
     ui = {
       exec = "npm run dev";
       cwd = "./equipment-reservation-ui/";
-    };
-    inventory = {
-      exec = "cargo run";
-      restart = {
-        on = "always";
-        max = null;
-      };
-      watch = {
-        paths = [./inventory];
-        extensions = ["rs" "toml"];
-        ignore = ["target" "*.log"];
-      };
-      cwd = "./inventory/";
-    };
-
-    reservation = {
-      exec = "cargo run";
-      restart = {
-        on = "always";
-        max = null;
-      };
-      watch = {
-        paths = [./reservation];
-        extensions = ["rs" "toml"];
-        ignore = ["target" "*.log"];
-      };
-      cwd = "./reservation/";
     };
   };
 

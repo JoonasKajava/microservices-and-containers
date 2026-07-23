@@ -11,3 +11,4 @@ devenv.local.yaml
 
 target/
 .idea
+tinyauth_data

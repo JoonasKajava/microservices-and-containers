@@ -1,0 +1,10 @@
+services:
+  ui:
+    networks:
+      - internal
+    build:
+      context: ./equipment-reservation-ui
+      dockerfile: Dockerfile.dev
+networks:
+  internal:
+  public:
