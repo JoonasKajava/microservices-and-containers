@@ -1,11 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import inventoryRepository from "~/lib/repositories/inventoryRepository"
 import { NavLink } from "react-router"
 import SimpleError from "~/components/widgets/SimpleError"
 import { Button, Empty, List } from "antd"
+import { useInventoryRepository } from "~/lib/hooks/useInventoryRepository"
+import { useAuth } from "react-oidc-context"
 
 export default function EquipmentList() {
   const queryClient = useQueryClient()
+
+  const auth = useAuth()
+
+  const inventoryRepository = useInventoryRepository(auth.user?.access_token!)
 
   const equipmentQuery = useQuery({
     queryKey: ["equipment"],

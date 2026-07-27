@@ -1,6 +1,6 @@
 import type { Equipment } from "~/lib/types"
 
-const InventoryRepository = () => ({
+export const InventoryRepository = (accessToken: string) => ({
   postEquipment: async (data: { name: string; description: string }) => {
     const response = await fetch("/api/v1/equipment", {
       method: "POST",
@@ -16,15 +16,17 @@ const InventoryRepository = () => ({
   readEquipment: async (): Promise<
     [{ equipmentId: string; name: string; description: string }]
   > => {
-    const response = await fetch("/api/v1/equipment")
+    const response = await fetch("/api/v1/equipment", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
 
     if (!response.ok) throw await response.text()
 
     return await response.json()
   },
-  readEquipmentById: async (
-    id: string
-  ): Promise<Equipment> => {
+  readEquipmentById: async (id: string): Promise<Equipment> => {
     const response = await fetch("/api/v1/equipment/" + id)
 
     if (!response.ok) throw await response.json()
@@ -38,7 +40,3 @@ const InventoryRepository = () => ({
     if (!response.ok) throw await response.text()
   },
 })
-
-const inventoryRepository = InventoryRepository()
-
-export default inventoryRepository

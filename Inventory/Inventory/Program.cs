@@ -16,6 +16,8 @@ builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 
 builder.Services.AddDbContext<InventoryDbContext>();
 
+builder.AddJwtAuthentication();
+
 builder.Services.AddOptions<InventoryOptions>()
     .Bind(builder.Configuration.GetSection(InventoryOptions.SectionName))
     .ValidateDataAnnotations()
@@ -36,6 +38,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -13,8 +13,10 @@ services:
     image: caddy
     restart: unless-stopped
     networks:
-      - public
-      - internal
+      public:
+      internal:
+        aliases:
+          - auth.equipment.localhost
     cap_add:
       - NET_ADMIN
     ports:
@@ -42,6 +44,8 @@ services:
       dockerfile: Dockerfile
     environment:
       Inventory__DatabaseUrl: Host=db;Port=5432;Database=inventory;Username=admin;Password=admin
+      Inventory__JwtAuthority: https://auth.equipment.localhost
+      Inventory__JwtAudience: ba0dcb0e-eb13-4bcd-8e68-4552ae88aa36
   reservation:
     restart: always
     depends_on:

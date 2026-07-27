@@ -1,11 +1,13 @@
 using Inventory.Contracts;
 using Inventory.Entities;
 using Inventory.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inventory.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("/api/v1/[controller]")]
 public class EquipmentController(
     ILogger<EquipmentController> logger,
