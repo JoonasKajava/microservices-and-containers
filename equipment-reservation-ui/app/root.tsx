@@ -8,18 +8,15 @@ import {
   ScrollRestoration,
 } from "react-router"
 
-import { App as AntdApp, Button, Card, Space } from "antd"
+import { App as AntdApp, Button } from "antd"
 
 import type { Route } from "./+types/root"
 import "./app.css"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import Container from "~/components/ui/container"
-import {
-  AuthProvider,
-  type AuthProviderProps,
-  useAuth,
-} from "react-oidc-context"
-import { useEffect } from "react"
+import { AuthProvider, type AuthProviderProps } from "react-oidc-context"
+import Profile from "~/components/widgets/profile"
+import AuthGuard from "~/components/widgets/auth-guard"
 
 const queryClient = new QueryClient()
 
@@ -29,7 +26,7 @@ const oidcConfig = {
   redirect_uri: import.meta.env.VITE_OIDC_REDIRECT_URI,
   response_type: "code",
   scope: "openid profile email",
-  disablePKCE: false
+  disablePKCE: false,
 } satisfies AuthProviderProps
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -51,21 +48,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
-  const auth = useAuth()
-  console.log(auth)
-  console.log(oidcConfig)
   return (
     <AntdApp>
       <QueryClientProvider client={queryClient}>
         <Container>
-          <Space>
-            <Button onClick={() => auth.signinRedirect()}>Login</Button>
-            <Button onClick={() => auth.signoutRedirect()}>Logout</Button>
-          </Space>
-          <NavLink className="block" to={"/"}>
-            <Button>Home</Button>
-          </NavLink>
-          {children}
+          <AuthGuard>
+            <Profile />
+            <NavLink className="block" to={"/"}>
+              <Button>Home</Button>
+            </NavLink>
+            {children}
+          </AuthGuard>
         </Container>
         <ScrollRestoration />
         <Scripts />
