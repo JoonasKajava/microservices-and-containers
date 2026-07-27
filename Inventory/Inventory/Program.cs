@@ -2,6 +2,7 @@ using Inventory;
 using Inventory.Context;
 using Inventory.Extensions;
 using Inventory.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +15,10 @@ builder.Services.AddOpenApi();
 builder.Services.AddSingleton<IInventoryPublisher, InventoryPublisher>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 
-builder.Services.AddDbContext<InventoryDbContext>();
+builder.Services.AddDbContext<InventoryDbContext>(opt =>
+{
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("InventoryDb"));
+});
 
 builder.AddJwtAuthentication();
 

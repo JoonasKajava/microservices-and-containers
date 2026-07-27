@@ -15,4 +15,9 @@ public class Equipment
 
     [MaxLength(1024)]
     public string? Description { get; set; }
+
+    [Required]
+    [MaxLength(255)]
+    public required string? Creator { get; set; }
+
 }

@@ -43,6 +43,7 @@ public class EquipmentController(
 
         var equipment = new Equipment
         {
+            Creator = HttpContext.User.Identity!.Name,
             Name = createEquipment.Name,
             Description = createEquipment.Description
         };

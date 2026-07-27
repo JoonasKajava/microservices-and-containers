@@ -83,12 +83,13 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 repository.GetEquipmentByIdAsync(TestEquipmentController.TestEquipmentId))
             .ReturnsAsync(new Entities.Equipment
             {
+                Creator = "Test",
                 Name = "Laptop"
             });
 
         builder.ConfigureServices(services =>
         {
-            services.Configure<InventoryOptions>(options => { options.DatabaseUrl = "dummy"; });
+            // services.Configure<InventoryOptions>(options => { options.DatabaseUrl = "dummy"; });
             services.AddSingleton(mocker.GetMock<IInventoryRepository>().Object);
         });
         builder.UseEnvironment("Testing");
