@@ -16,7 +16,7 @@ public class EquipmentController(
     [HttpGet(Name = "GetEquipment")]
     public IEnumerable<Equipment> Get()
     {
-        logger.LogInformation("Getting equipment");
+        logger.LogInformation("Getting equipment list");
         return inventoryRepository.GetEquipments();
     }
 

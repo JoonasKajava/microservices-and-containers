@@ -8,6 +8,26 @@ services:
     build:
       context: ./equipment-reservation-ui
       dockerfile: Dockerfile.dev
+  inventory:
+    networks:
+      - internal
+    volumes:
+      - ./Inventory/Inventory/:/app
+      - /app/bin
+      - /app/obj
+    build:
+      context: ./Inventory/Inventory
+      dockerfile: DockerfileDev
+  reservation:
+    networks:
+      - internal
+    volumes:
+      - ./Reservation/Reservation/:/app
+      - /app/bin
+      - /app/obj
+    build:
+      context: ./Reservation/Reservation
+      dockerfile: DockerfileDev
 networks:
   internal:
   public:

@@ -1,6 +1,7 @@
 using Inventory;
 using Inventory.Context;
 using Inventory.Extensions;
+using Inventory.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddSingleton<IInventoryPublisher, InventoryPublisher>();
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 
 builder.Services.AddDbContext<InventoryDbContext>();
 
@@ -40,4 +42,6 @@ app.MapControllers();
 
 app.Run();
 
-public partial class Program {}
+public partial class Program
+{
+}

@@ -1,0 +1,7 @@
+FROM mcr.microsoft.com/dotnet/sdk:11.0-preview AS build
+ARG BUILD_CONFIGURATION=Development
+WORKDIR /app
+COPY ["Inventory.csproj", "./"]
+RUN dotnet restore "Inventory.csproj"
+COPY . .
+CMD ["dotnet", "watch", "run", "--no-launch-profile"]
