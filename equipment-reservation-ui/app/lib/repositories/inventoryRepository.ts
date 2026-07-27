@@ -6,6 +6,7 @@ export const InventoryRepository = (accessToken: string) => ({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify(data),
     })
@@ -27,7 +28,11 @@ export const InventoryRepository = (accessToken: string) => ({
     return await response.json()
   },
   readEquipmentById: async (id: string): Promise<Equipment> => {
-    const response = await fetch("/api/v1/equipment/" + id)
+    const response = await fetch("/api/v1/equipment/" + id, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
 
     if (!response.ok) throw await response.json()
 
@@ -36,6 +41,9 @@ export const InventoryRepository = (accessToken: string) => ({
   deleteEquipment: async (id: string) => {
     const response = await fetch(`/api/v1/equipment/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     })
     if (!response.ok) throw await response.text()
   },

@@ -16,6 +16,7 @@ import Container from "~/components/ui/container"
 import { AuthProvider, type AuthProviderProps } from "react-oidc-context"
 import Profile from "~/components/widgets/profile"
 import AuthGuard from "~/components/widgets/auth-guard"
+import { WebStorageStateStore } from "oidc-client-ts"
 
 const queryClient = new QueryClient()
 

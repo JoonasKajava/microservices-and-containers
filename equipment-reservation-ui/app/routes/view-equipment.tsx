@@ -1,15 +1,19 @@
 import React, { useMemo } from "react"
 import { useParams } from "react-router"
 import { useQuery } from "@tanstack/react-query"
-import inventoryRepository from "~/lib/repositories/inventoryRepository"
 import { Descriptions, Divider, Empty, Skeleton, Space } from "antd"
 import type { DescriptionsItemType } from "antd/lib/descriptions"
 import type { ApiError, Equipment } from "~/lib/types"
 import { Title } from "~/components/ui/Typography"
 import NewReservation from "~/components/widgets/new-reservation"
 import ListReservations from "~/components/widgets/list-reservations"
+import { useInventoryRepository } from "~/lib/hooks/useInventoryRepository"
+import { useAuth } from "react-oidc-context"
 
 const ViewEquipment = () => {
+  const auth = useAuth()
+  const inventoryRepository = useInventoryRepository(auth.user?.access_token!)
+
   const { equipmentId } = useParams<{ equipmentId: string }>()
 
   const equipmentQuery = useQuery<Equipment, ApiError>({

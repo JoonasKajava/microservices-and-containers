@@ -1,10 +1,16 @@
 import { useNavigate } from "react-router"
-import inventoryRepository from "~/lib/repositories/inventoryRepository"
 import { useMutation } from "@tanstack/react-query"
 import { App, Button, Form, Input, Space } from "antd"
 import { Title } from "~/components/ui/Typography"
+import { useInventoryRepository } from "~/lib/hooks/useInventoryRepository"
+import { useAuth } from "react-oidc-context"
 
 export default function AddEquipment() {
+
+  const auth = useAuth();
+
+  const inventoryRepository = useInventoryRepository(auth.user?.access_token!)
+
   const { notification } = App.useApp()
 
   const [form] = Form.useForm()
