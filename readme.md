@@ -2,9 +2,10 @@
 
 ## TODO:
 - Aspire dashboard
-- OpenID for Inventory and reservation
-- Show current user with Card and force login
+- Jwt autentication for reservation
 - Save sub to database for equipment and reservation
+- Finish docs
+- ask tutor about grading
 
 ## Diagram
 
