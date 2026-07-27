@@ -1,11 +1,15 @@
 import React from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import reservationRepository from "~/lib/repositories/reservationRepository"
 import { App, Button, Table } from "antd"
 import type { Reservation } from "~/lib/types"
+import { useAuth } from "react-oidc-context"
+import { useReservationRepository } from "~/lib/hooks/useReservationRepository"
 
 const ListReservations = (props: { equipmentId: string }) => {
   const { notification } = App.useApp()
+
+  const auth = useAuth();
+  const reservationRepository = useReservationRepository(auth.user?.access_token!)
 
   const queryClient = useQueryClient()
 
@@ -51,6 +55,11 @@ const ListReservations = (props: { equipmentId: string }) => {
       key: "endTime",
       render: (_: any, record: Reservation) =>
         new Date(record.endTime).toLocaleString(),
+    },
+    {
+      title: "User",
+      dataIndex: "reservedBy",
+      key: "reservedBy",
     },
     {
       title: "Action",

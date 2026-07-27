@@ -1,7 +1,7 @@
 import type { Dayjs } from "dayjs"
 import type { Reservation } from "~/lib/types"
 
-const ReservationRepository = () => ({
+export const ReservationRepository = (accessToken: string) => ({
   postReservation: async (data: {
     equipmentId: string
     startTime: Dayjs
@@ -11,6 +11,7 @@ const ReservationRepository = () => ({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify(data),
     })
@@ -22,7 +23,11 @@ const ReservationRepository = () => ({
     let params = new URLSearchParams()
     params.append("equipmentId", equipmentId)
 
-    const response = await fetch("/api/v1/reservations?" + params.toString())
+    const response = await fetch("/api/v1/reservations?" + params.toString(), {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
 
     if (!response.ok) throw await response.json()
 
@@ -31,11 +36,10 @@ const ReservationRepository = () => ({
   deleteReservation: async (id: string) => {
     const response = await fetch(`/api/v1/reservations/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     })
     if (!response.ok) throw await response.text()
   },
 })
-
-const reservationRepository = ReservationRepository()
-
-export default reservationRepository

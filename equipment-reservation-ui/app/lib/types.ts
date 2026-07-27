@@ -9,7 +9,8 @@ export interface Reservation {
   equipmentId: string,
   reservationId: string,
   startTime: string,
-  endTime: string
+  endTime: string,
+  reservedBy: string
 }
 
 export interface ApiError {

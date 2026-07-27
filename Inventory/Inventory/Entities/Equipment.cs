@@ -18,6 +18,6 @@ public class Equipment
 
     [Required]
     [MaxLength(255)]
-    public required string? Creator { get; set; }
+    public required string Creator { get; set; }
 
 }

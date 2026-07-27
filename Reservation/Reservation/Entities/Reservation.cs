@@ -17,4 +17,8 @@ public class Reservation
 
     [Required]
     public DateTimeOffset EndTime { get; set; }
+
+    [Required]
+    [MaxLength(255)]
+    public required string ReservedBy { get; set; }
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Reservation.Contracts;
 using Reservation.Repositories;
@@ -5,6 +6,7 @@ using Reservation.Repositories;
 namespace Reservation.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("/api/v1/[controller]")]
 public class ReservationsController(
     ILogger<ReservationsController> logger,
@@ -28,7 +30,9 @@ public class ReservationsController(
             return BadRequest(ModelState);
         }
 
-        var equipment = await inventoryRepository.GetEquipmentByIdAsync(createReservation.EquipmentId);
+        var token = HttpContext.Request.Headers["Authorization"].ToString();
+
+        var equipment = await inventoryRepository.GetEquipmentByIdAsync(createReservation.EquipmentId, token);
 
         if (equipment is null)
         {
@@ -46,12 +50,14 @@ public class ReservationsController(
             return Conflict();
         }
 
+        var sub = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
 
         var reservation = new Entities.Reservation
         {
             EquipmentId = createReservation.EquipmentId,
             StartTime = createReservation.StartTime,
-            EndTime = createReservation.EndTime
+            EndTime = createReservation.EndTime,
+            ReservedBy = sub!
         };
 
         await reservationsRepository.CreateReservationAsync(reservation);

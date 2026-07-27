@@ -15,4 +15,10 @@ public class ReservationOptions
 
     [Required]
     public required string InventorySubAddr { get; set; }
+
+    [Required]
+    public required string JwtAuthority { get; set; }
+
+    [Required]
+    public required string JwtAudience { get; set; }
 }

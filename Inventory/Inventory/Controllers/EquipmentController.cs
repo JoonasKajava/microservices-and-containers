@@ -44,7 +44,7 @@ public class EquipmentController(
 
         var equipment = new Equipment
         {
-            Creator = sub,
+            Creator = sub!,
             Name = createEquipment.Name,
             Description = createEquipment.Description
         };

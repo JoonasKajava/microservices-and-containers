@@ -59,6 +59,8 @@ services:
       Reservation__DatabaseUrl: Host=db;Port=5432;Database=reservation;Username=admin;Password=admin
       Reservation__InventoryServiceUrl: http://inventory:8080
       Reservation__InventorySubAddr: tcp://inventory:5556
+      Reservation__JwtAuthority: https://auth.equipment.localhost
+      Reservation__JwtAudience: ba0dcb0e-eb13-4bcd-8e68-4552ae88aa36
   db:
     networks:
       - internal

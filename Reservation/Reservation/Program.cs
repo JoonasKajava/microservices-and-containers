@@ -20,6 +20,8 @@ builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 
 builder.Services.AddDbContext<ReservationDbContext>();
 
+builder.AddJwtAuthentication();
+
 builder.Services.AddOptions<ReservationOptions>()
     .Bind(builder.Configuration.GetSection(ReservationOptions.SectionName))
     .ValidateDataAnnotations()
@@ -37,6 +39,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
