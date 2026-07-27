@@ -1,7 +1,8 @@
 export interface Equipment {
   equipmentId: string
   name: string
-  description: string
+  description: string,
+  creator: string
 }
 
 export interface Reservation {

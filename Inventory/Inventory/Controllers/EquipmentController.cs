@@ -37,13 +37,14 @@ public class EquipmentController(
     {
         if (!ModelState.IsValid)
         {
-
             return BadRequest(ModelState);
         }
 
+        var sub = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+
         var equipment = new Equipment
         {
-            Creator = HttpContext.User.Identity!.Name,
+            Creator = sub,
             Name = createEquipment.Name,
             Description = createEquipment.Description
         };

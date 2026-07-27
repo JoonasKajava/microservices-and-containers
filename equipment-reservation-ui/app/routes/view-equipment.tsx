@@ -42,6 +42,10 @@ const ViewEquipment = () => {
         label: "Description",
         children: dataOrSkeleton("description"),
       },
+      {
+        label: "Creator",
+        children: dataOrSkeleton("creator"),
+      },
     ]
   }, [equipmentQuery.isSuccess, equipmentQuery.data])
 

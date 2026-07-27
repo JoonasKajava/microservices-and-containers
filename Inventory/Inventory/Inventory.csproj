@@ -19,6 +19,7 @@
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.10" />
         <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.10" />
         <PackageReference Include="NetMQ" Version="4.0.4.2" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
     </ItemGroup>
 

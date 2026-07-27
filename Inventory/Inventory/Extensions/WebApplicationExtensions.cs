@@ -24,6 +24,8 @@ public static class WebApplicationExtensions
             {
                 options.MetadataAddress = $"{configuration.JwtAuthority}/.well-known/openid-configuration";
 
+                options.MapInboundClaims = false;
+
                 options.BackchannelHttpHandler = new HttpClientHandler()
                 {
                     ServerCertificateCustomValidationCallback

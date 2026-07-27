@@ -1,5 +1,8 @@
 services:
   db:
+    networks:
+      - internal
+      - public
     ports:
       - 5432:5432
   ui:
