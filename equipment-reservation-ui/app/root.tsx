@@ -2,13 +2,12 @@ import {
   isRouteErrorResponse,
   Links,
   Meta,
-  NavLink,
   Outlet,
   Scripts,
   ScrollRestoration,
 } from "react-router"
 
-import { App as AntdApp, Button } from "antd"
+import { App as AntdApp, Space } from "antd"
 
 import type { Route } from "./+types/root"
 import "./app.css"
@@ -35,6 +34,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Equipment Reservation</title>
         <Meta />
         <Links />
       </head>
@@ -53,11 +53,10 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
       <QueryClientProvider client={queryClient}>
         <Container>
           <AuthGuard>
-            <Profile />
-            <NavLink className="block" to={"/"}>
-              <Button>Home</Button>
-            </NavLink>
-            {children}
+            <Space orientation="vertical">
+              <Profile />
+              {children}
+            </Space>
           </AuthGuard>
         </Container>
         <ScrollRestoration />

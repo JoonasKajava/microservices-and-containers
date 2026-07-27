@@ -2,6 +2,7 @@ import React from "react"
 import { Avatar, Button, Card } from "antd"
 import { UserOutlined } from "@ant-design/icons"
 import { useAuth } from "react-oidc-context"
+import { NavLink } from "react-router"
 
 const Profile = () => {
   const auth = useAuth()
@@ -10,6 +11,9 @@ const Profile = () => {
     <div className="flex">
       <Card
         actions={[
+          <NavLink className="block" to={"/"}>
+            <Button>Home</Button>
+          </NavLink>,
           <Button onClick={() => auth.signoutRedirect()}>Logout</Button>,
         ]}
       >
