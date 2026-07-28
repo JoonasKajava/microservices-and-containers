@@ -1,17 +1,13 @@
 using Microsoft.Extensions.Options;
 using NetMQ;
 using NetMQ.Sockets;
-using Reservation.Repositories;
 
 namespace Reservation;
 
 public class InventorySubscriber(
     ILogger<InventorySubscriber> logger,
-    IOptions<ReservationOptions> options,
-    IServiceProvider serviceProvider
-) : BackgroundService
+    IOptions<ReservationOptions> options) : BackgroundService
 {
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         logger.LogInformation("Inventory subscriber is starting.");
@@ -23,17 +19,10 @@ public class InventorySubscriber(
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            using var scope = serviceProvider.CreateScope();
-            var reservationsRepository = scope.ServiceProvider.GetRequiredService<IReservationsRepository>();
-
             var topic = socket.ReceiveFrameString();
             var msg = socket.ReceiveFrameString();
 
-            logger.LogInformation("Equipment with id: {id} deleted", msg);
-
-            await reservationsRepository.DeleteReservationsForEquipmentAsync(Guid.Parse(msg));
+            logger.LogInformation("Received delete message for id: {id}", msg);
         }
     }
-
-
 }

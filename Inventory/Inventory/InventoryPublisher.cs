@@ -32,7 +32,7 @@ public class InventoryPublisher : IHostedService, IDisposable
         ArgumentNullException.ThrowIfNull(_socket);
         var id = Guid.NewGuid().ToString();
         _socket.SendMoreFrame("delete").SendFrame(id);
-        _logger.LogInformation("Equipment with id: {id} deleted", id);
+        _logger.LogInformation("Sent delete message for id: {id}", id);
     }
 
     public Task StopAsync(CancellationToken stoppingToken)
