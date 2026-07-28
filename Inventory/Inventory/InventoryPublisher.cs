@@ -4,15 +4,11 @@ using NetMQ.Sockets;
 
 namespace Inventory;
 
-public interface IInventoryPublisher
+public class InventoryPublisher : IHostedService, IDisposable
 {
-    public Task EquipmentDeleted(Guid id);
-}
-
-public class InventoryPublisher : IInventoryPublisher
-{
-    private readonly ILogger<InventoryPublisher> _logger;
+    private Timer? _timer;
     private readonly PublisherSocket? _socket;
+    private readonly ILogger<InventoryPublisher> _logger;
 
     public InventoryPublisher(ILogger<InventoryPublisher> logger, IOptions<InventoryOptions> options)
     {
@@ -23,17 +19,33 @@ public class InventoryPublisher : IInventoryPublisher
         _socket.Bind(options.Value.InventoryPublisherBindAddr);
     }
 
+    public Task StartAsync(CancellationToken stoppingToken)
+    {
+        _timer = new Timer(DeleteEquipment, null, TimeSpan.Zero,
+            TimeSpan.FromSeconds(5));
+
+        return Task.CompletedTask;
+    }
+
+    private void DeleteEquipment(object? state)
+    {
+        ArgumentNullException.ThrowIfNull(_socket);
+        var id = Guid.NewGuid().ToString();
+        _socket.SendMoreFrame("delete").SendFrame(id);
+        _logger.LogInformation("Equipment with id: {id} deleted", id);
+    }
+
+    public Task StopAsync(CancellationToken stoppingToken)
+    {
+        _logger.LogInformation("InventoryPublisher is stopping.");
+
+        _timer?.Change(Timeout.Infinite, 0);
+
+        return Task.CompletedTask;
+    }
 
     public void Dispose()
     {
-        _socket?.Dispose();
-    }
-
-    public Task EquipmentDeleted(Guid id)
-    {
-        ArgumentNullException.ThrowIfNull(_socket);
-        _socket.SendMoreFrame("delete").SendFrame(id.ToString());
-        _logger.LogInformation("Equipment with id: {id} deleted", id);
-        return Task.CompletedTask;
+        _timer?.Dispose();
     }
 }
