@@ -2,6 +2,10 @@ https://auth.equipment.localhost {
 	reverse_proxy pocket-id:1411
 }
 
+https://monitor.equipment.localhost {
+	reverse_proxy aspire:18888
+}
+
 https://equipment.localhost {
 	reverse_proxy ui:3000
 }

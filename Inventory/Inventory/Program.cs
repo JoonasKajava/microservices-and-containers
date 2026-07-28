@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddOpenTelemetry();
+
 // Add services to the container.
 
 builder.Services.AddControllers();

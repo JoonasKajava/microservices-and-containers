@@ -46,6 +46,8 @@ services:
       ConnectionStrings__InventoryDb: Host=db;Port=5432;Database=inventory;Username=admin;Password=admin
       Inventory__JwtAuthority: https://auth.equipment.localhost
       Inventory__JwtAudience: ba0dcb0e-eb13-4bcd-8e68-4552ae88aa36
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire:18889
+      OTEL_SERVICE_NAME: "Inventory"
   reservation:
     restart: always
     depends_on:
@@ -69,6 +71,14 @@ services:
       POSTGRES_PASSWORD: admin
       POSTGRES_USER: admin
       POSTGRES_DB: inventory
+  aspire:
+    networks:
+      - internal
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
+    environment:
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: true
+      ASPIRE_ALLOW_UNSECURED_TRANSPORT: true
+      DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: true
 networks:
   internal:
     driver: bridge
