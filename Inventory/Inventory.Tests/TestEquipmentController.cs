@@ -2,6 +2,7 @@
 using System.Text;
 using Inventory.Contracts;
 using Inventory.Repositories;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +17,7 @@ public class TestEquipmentController(CustomWebApplicationFactory factory) : ICla
 
     private readonly HttpClient _client = factory.CreateClient(new WebApplicationFactoryClientOptions()
     {
-        AllowAutoRedirect = false
+        AllowAutoRedirect = false,
     });
 
     [Fact]
@@ -89,7 +90,13 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
         builder.ConfigureServices(services =>
         {
-            // services.Configure<InventoryOptions>(options => { options.DatabaseUrl = "dummy"; });
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = "TestScheme";
+                options.DefaultChallengeScheme = "TestScheme";
+            }).AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("TestScheme", options => { });
+
+            services.Configure<InventoryOptions>(options => { });
             services.AddSingleton(mocker.GetMock<IInventoryRepository>().Object);
         });
         builder.UseEnvironment("Testing");
