@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using OpenTelemetry;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 using Reservation.Context;
 
 namespace Reservation.Extensions;
@@ -38,5 +41,31 @@ public static class WebApplicationExtensions
                     ValidateIssuerSigningKey = true
                 };
             });
+    }
+
+    public static void AddOpenTelemetry(this WebApplicationBuilder builder)
+    {
+        builder.Logging.AddOpenTelemetry(logging =>
+        {
+            logging.IncludeFormattedMessage = true;
+            logging.IncludeScopes = true;
+        });
+
+        var openTelemetry = builder.Services.AddOpenTelemetry();
+
+        openTelemetry.WithMetrics(metrics =>
+        {
+            metrics.AddAspNetCoreInstrumentation();
+            metrics.AddMeter("Microsoft.AspNetCore.Hosting");
+            metrics.AddMeter("Microsoft.AspNetCore.Server.Kestrel");
+        });
+
+        openTelemetry.WithTracing(tracing =>
+        {
+            tracing.AddAspNetCoreInstrumentation();
+            tracing.AddHttpClientInstrumentation();
+        });
+
+        openTelemetry.UseOtlpExporter();
     }
 }

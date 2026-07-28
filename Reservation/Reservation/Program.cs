@@ -5,6 +5,8 @@ using Reservation.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddOpenTelemetry();
+
 // Add services to the container.
 
 builder.Services.AddHostedService<InventorySubscriber>();
