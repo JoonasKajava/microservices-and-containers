@@ -2,34 +2,53 @@
 
 Equipment reservation domain
 
-# Subdomains
+## Subdomains
 
 - Equipment domain
 - Reservation domain
 - Account domain
 
-# Bounded Contexts
+## Bounded Contexts
 
 Same as subdomains:
 
-- Equipment context
-- Reservation context
-- Account context
+### Equipment Context
 
-# Value Objects
+Is responsible for managing equipment.
+
+- Adding equipment to the system.
+- Removing equipment from system.
+- Handles information regarding equipment.
+
+### Reservation Context
+
+Is responsible for managing reservations.
+
+- Reserving equipment.
+- Cancelling reservation.
+- Handles information regarding reservations.
+
+### Account context
+
+Is responsible for managing users.
+
+- Authentication.
+- Registration.
+- Information management.
+
+## Value Objects
 
 - Time span
 - Equipment status
 
-# Entities
+## Entities
 
 - Equipment
 - Reservation
 - Employee
 
-# Aggregates
+## Aggregates
 
-![alt](https://yqintl.alicdn.com/b49cdbdd00bd745ea18d8256ef7ebbf6e229ae96.png)
 
 ```mermaid
 classDiagram
