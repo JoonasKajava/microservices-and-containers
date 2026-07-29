@@ -5,6 +5,7 @@
 - [x] Save sub to database for equipment and reservation
 - [ ] Finish docs
 - [x] ask tutor about grading
+- [x] Finish reservation status messaging
 
 ## Checklist
 

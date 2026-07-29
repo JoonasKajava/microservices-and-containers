@@ -46,6 +46,7 @@ services:
       ConnectionStrings__InventoryDb: Host=db;Port=5432;Database=inventory;Username=admin;Password=admin
       Inventory__JwtAuthority: https://auth.equipment.localhost
       Inventory__JwtAudience: ba0dcb0e-eb13-4bcd-8e68-4552ae88aa36
+      Inventory__ReservationSubAddr: tcp://reservation:5557
       OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire:18889
       OTEL_SERVICE_NAME: "Inventory"
   reservation:

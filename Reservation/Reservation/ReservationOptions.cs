@@ -21,4 +21,6 @@ public class ReservationOptions
 
     [Required]
     public required string JwtAudience { get; set; }
+
+    public string PublisherBindAddr { get; set; } = "tcp://0.0.0.0:5557";
 }

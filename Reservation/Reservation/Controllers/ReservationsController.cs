@@ -1,6 +1,8 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Reservation.Contracts;
+using Reservation.Entities;
 using Reservation.Repositories;
 
 namespace Reservation.Controllers;
@@ -11,7 +13,8 @@ namespace Reservation.Controllers;
 public class ReservationsController(
     ILogger<ReservationsController> logger,
     IReservationsRepository reservationsRepository,
-    IInventoryRepository inventoryRepository
+    IInventoryRepository inventoryRepository,
+    IReservationPublisher reservationPublisher
 )
     : ControllerBase
 {
@@ -54,6 +57,7 @@ public class ReservationsController(
 
         var reservation = new Entities.Reservation
         {
+            Status = ReservationStatus.Reserved,
             EquipmentId = createReservation.EquipmentId,
             StartTime = createReservation.StartTime,
             EndTime = createReservation.EndTime,
@@ -62,13 +66,47 @@ public class ReservationsController(
 
         await reservationsRepository.CreateReservationAsync(reservation);
 
+        await reservationPublisher.ReservationCreated(reservation);
+
         return CreatedAtRoute("CreateReservation", reservation);
     }
 
     [HttpDelete("{id}", Name = "DeleteReservation")]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
+        var reservation = await reservationsRepository.GetReservation(id);
+
+        if (reservation is null)
+        {
+            logger.LogWarning("Reservation with id: {id} not found during delete", id);
+            return NotFound($"Reservation with id: {id} not found");
+        }
+
         await reservationsRepository.DeleteReservationAsync(id);
+
+        await reservationPublisher.ReservationCanceled(reservation.ReservationId, reservation.EquipmentId);
+
         return NoContent();
+    }
+
+    [HttpPatch(Name = "UpdateReservation")]
+    public async Task<IActionResult> Patch([FromBody] UpdateReservationStatus updateReservationStatus)
+    {
+        logger.LogInformation("Updating reservation status of {id} to {status}", updateReservationStatus.Id, updateReservationStatus.Status);
+
+        var reservation = await reservationsRepository.UpdateReservationAsync(updateReservationStatus.Id,
+            (reservation) => { reservation.Status = updateReservationStatus.Status; });
+
+        switch (updateReservationStatus.Status)
+        {
+            case ReservationStatus.Started:
+                await reservationPublisher.ReservationStarted(reservation);
+                break;
+            case ReservationStatus.Returned:
+                await reservationPublisher.ReservationReturned(reservation);
+                break;
+        }
+
+        return Ok(reservation);
     }
 }

@@ -10,6 +10,9 @@ public class Reservation
     public Guid ReservationId { get; set; }
 
     [Required]
+    public required ReservationStatus Status { get; set; }
+
+    [Required]
     public required Guid EquipmentId { get; set; }
 
     [Required]
@@ -21,4 +24,11 @@ public class Reservation
     [Required]
     [MaxLength(255)]
     public required string ReservedBy { get; set; }
+}
+
+public enum ReservationStatus
+{
+    Reserved = 0,
+    Started = 1,
+    Returned = 2,
 }

@@ -1,5 +1,5 @@
 import type { Dayjs } from "dayjs"
-import type { Reservation } from "~/lib/types"
+import { type Reservation, ReservationStatus } from "~/lib/types"
 
 export const ReservationRepository = (accessToken: string) => ({
   postReservation: async (data: {
@@ -39,6 +39,18 @@ export const ReservationRepository = (accessToken: string) => ({
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
+    })
+    if (!response.ok) throw await response.text()
+  },
+
+  changeReservationStatus: async (id: string, status: ReservationStatus) => {
+    const response = await fetch(`/api/v1/reservations`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ id, status }),
     })
     if (!response.ok) throw await response.text()
   },

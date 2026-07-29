@@ -9,7 +9,7 @@ public interface IInventoryPublisher
     public Task EquipmentDeleted(Guid id);
 }
 
-public class InventoryPublisher : IInventoryPublisher
+public class InventoryPublisher : IInventoryPublisher, IDisposable
 {
     private readonly ILogger<InventoryPublisher> _logger;
     private readonly PublisherSocket? _socket;

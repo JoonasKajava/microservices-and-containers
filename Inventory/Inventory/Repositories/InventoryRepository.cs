@@ -10,6 +10,8 @@ public interface IInventoryRepository
     Task<Equipment?> GetEquipmentByIdAsync(Guid id);
     Task DeleteEquipmentByIdAsync(Guid id);
     Task CreateEquipmentAsync(Equipment equipment);
+
+    public Task<Equipment> UpdateEquipmentAsync(Guid id, Action<Equipment> updateAction);
 }
 
 public class InventoryRepository(InventoryDbContext dbContext) : IInventoryRepository
@@ -33,5 +35,15 @@ public class InventoryRepository(InventoryDbContext dbContext) : IInventoryRepos
     {
         dbContext.Equipment.Add(equipment);
         await dbContext.SaveChangesAsync();
+    }
+
+    public async Task<Equipment> UpdateEquipmentAsync(Guid id, Action<Equipment> updateAction)
+    {
+        var equipment = await dbContext.Equipment.FirstAsync(x => x.EquipmentId == id);
+
+        updateAction(equipment);
+        await dbContext.SaveChangesAsync();
+
+        return equipment;
     }
 }

@@ -20,4 +20,13 @@ public class Equipment
     [MaxLength(255)]
     public required string Creator { get; set; }
 
+    [Required]
+    public required EquipmentAvailability Availability { get; set; }
+
+}
+
+public enum EquipmentAvailability
+{
+    Available = 0,
+    InUse = 1
 }

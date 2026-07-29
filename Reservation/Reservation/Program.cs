@@ -19,6 +19,7 @@ builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<IReservationsRepository, ReservationsRepository>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+builder.Services.AddSingleton<IReservationPublisher, ReservationPublisher>();
 
 builder.Services.AddDbContext<ReservationDbContext>();
 

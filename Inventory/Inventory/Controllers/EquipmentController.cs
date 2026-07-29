@@ -46,7 +46,8 @@ public class EquipmentController(
         {
             Creator = sub!,
             Name = createEquipment.Name,
-            Description = createEquipment.Description
+            Description = createEquipment.Description,
+            Availability = EquipmentAvailability.Available
         };
 
         await inventoryRepository.CreateEquipmentAsync(equipment);

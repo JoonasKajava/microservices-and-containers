@@ -3,7 +3,11 @@ import { useParams } from "react-router"
 import { useQuery } from "@tanstack/react-query"
 import { Descriptions, Divider, Empty, Skeleton, Space } from "antd"
 import type { DescriptionsItemType } from "antd/lib/descriptions"
-import type { ApiError, Equipment } from "~/lib/types"
+import {
+  type ApiError,
+  type Equipment,
+  EquipmentAvailability,
+} from "~/lib/types"
 import { Title } from "~/components/ui/Typography"
 import NewReservation from "~/components/widgets/new-reservation"
 import ListReservations from "~/components/widgets/list-reservations"
@@ -24,6 +28,9 @@ const ViewEquipment = () => {
   const details: DescriptionsItemType[] = useMemo(() => {
     const dataOrSkeleton = (key: keyof Equipment) => {
       if (equipmentQuery.isSuccess) {
+        if (key === "availability") {
+          return <p>{EquipmentAvailability[equipmentQuery.data[key]]}</p>
+        }
         return <p>{equipmentQuery.data[key]}</p>
       } else {
         return <Skeleton />
@@ -45,6 +52,10 @@ const ViewEquipment = () => {
       {
         label: "Creator",
         children: dataOrSkeleton("creator"),
+      },
+      {
+        label: "Availability",
+        children: dataOrSkeleton("availability"),
       },
     ]
   }, [equipmentQuery.isSuccess, equipmentQuery.data])

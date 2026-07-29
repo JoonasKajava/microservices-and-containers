@@ -10,6 +10,8 @@ builder.AddOpenTelemetry();
 
 // Add services to the container.
 
+builder.Services.AddHostedService<ReservationSubscriber>();
+
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();

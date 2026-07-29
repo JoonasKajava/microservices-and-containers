@@ -1,15 +1,18 @@
 import React from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { App, Button, Table } from "antd"
-import type { Reservation } from "~/lib/types"
+import { App, Button, Dropdown, Table } from "antd"
+import { type Reservation, ReservationStatus } from "~/lib/types"
 import { useAuth } from "react-oidc-context"
 import { useReservationRepository } from "~/lib/hooks/useReservationRepository"
+import { DownOutlined } from "@ant-design/icons"
 
 const ListReservations = (props: { equipmentId: string }) => {
   const { notification } = App.useApp()
 
-  const auth = useAuth();
-  const reservationRepository = useReservationRepository(auth.user?.access_token!)
+  const auth = useAuth()
+  const reservationRepository = useReservationRepository(
+    auth.user?.access_token!
+  )
 
   const queryClient = useQueryClient()
 
@@ -18,11 +21,23 @@ const ListReservations = (props: { equipmentId: string }) => {
     queryFn: () => reservationRepository.readReservations(props.equipmentId),
   })
 
-  const cancelReservationMutation = useMutation({
-    mutationFn: reservationRepository.deleteReservation,
+  const updateReservationMutation = useMutation({
+    mutationFn: (variables: {
+      id: string
+      action: "cancel" | "return" | "start"
+    }) => {
+      if (variables.action === "cancel")
+        return reservationRepository.deleteReservation(variables.id)
+      return reservationRepository.changeReservationStatus(
+        variables.id,
+        variables.action === "start"
+          ? ReservationStatus.Started
+          : ReservationStatus.Returned
+      )
+    },
     onSuccess: () => {
       notification.success({
-        title: "Reservation canceled successfully",
+        title: "Reservation status changed successfully",
         placement: "top",
         duration: 5,
       })
@@ -31,10 +46,16 @@ const ListReservations = (props: { equipmentId: string }) => {
           queryKey: ["reservations", props.equipmentId],
         })
         .catch(console.error)
+
+      queryClient
+        .invalidateQueries({
+          queryKey: ["equipment", props.equipmentId],
+        })
+        .catch(console.error)
     },
     onError: () => {
       notification.error({
-        title: "Reservation cancellation failed",
+        title: "Reservation status change failed",
         placement: "top",
         duration: 5,
       })
@@ -42,6 +63,14 @@ const ListReservations = (props: { equipmentId: string }) => {
   })
 
   const columns = [
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+
+      render: (_: any, record: Reservation) =>
+        ReservationStatus[record.status]
+    },
     {
       title: "Start Time",
       dataIndex: "startTime",
@@ -62,15 +91,39 @@ const ListReservations = (props: { equipmentId: string }) => {
       key: "reservedBy",
     },
     {
-      title: "Action",
-      key: "action",
+      title: "Actions",
+      key: "actions",
       render: (_: any, record: Reservation) => (
-        <Button
-          onClick={() => cancelReservationMutation.mutate(record.reservationId)}
-          danger
+        <Dropdown
+          menu={{
+            items: [
+              {
+                label: "Cancel",
+                key: "cancel",
+              },
+              {
+                label: "Start",
+                key: "start",
+                disabled: record.status !== ReservationStatus.Reserved,
+              },
+              {
+                label: "Return",
+                key: "return",
+                disabled: record.status !== ReservationStatus.Started,
+              },
+            ],
+            onClick: (e) => {
+              updateReservationMutation.mutate({
+                id: record.reservationId,
+                action: e.key as "cancel" | "return" | "start",
+              })
+            },
+          }}
         >
-          Cancel
-        </Button>
+          <Button icon={<DownOutlined />} iconPlacement="end">
+            Change Status
+          </Button>
+        </Dropdown>
       ),
     },
   ]
