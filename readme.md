@@ -6,6 +6,9 @@
 - [DDD Documentation](./DDD-Document.md)
 - [Testing Plan](./Testing-plan.md)
 
+## Demo
+
+![Demo](Demo.mp4)
 
 ## Diagram
 
