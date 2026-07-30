@@ -1,0 +1,16 @@
+@Inventory_HostAddress = http://localhost:5058
+
+GET {{Inventory_HostAddress}}/openapi/v1.json
+Accept: application/json
+
+####
+
+POST {{Inventory_HostAddress}}/api/v1/Equipment
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImhBS1VJczNxQnpJIiwidHlwIjoiSldUIn0.eyJhdWQiOlsiYmEwZGNiMGUtZWIxMy00YmNkLThlNjgtNDU1MmFlODhhYTM2IiwiaHR0cHM6Ly9hdXRoLmVxdWlwbWVudC5sb2NhbGhvc3QiXSwiZXhwIjoxNzg1MTg3NDI4LCJpYXQiOjE3ODUxODM4MjcsImlzcyI6Imh0dHBzOi8vYXV0aC5lcXVpcG1lbnQubG9jYWxob3N0IiwianRpIjoiYTg5MWU0MmItOWUyZS00MzhjLTljMDctM2Q0ZDU4Yzc2NzUzIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsInNjcCI6WyJvcGVuaWQiLCJwcm9maWxlIiwiZW1haWwiXSwic3ViIjoiNGYyYzIyYWYtMDU0My00NDcyLWE3ZTItNWU2YmZjOTgyY2UxIn0.veepOLxJaYgKHEVcGuvuAn4iv9R-BniTdNQ9HE6oMlUyZpVmhRk97iejaR-Lnd-PWEQbzd4edHWZOvv7y0ykjkf0qDp2cph7vKI4usE2TOHKU2tNykDEIkc3cHzLF2t_WlF0f5SQASZ9j5VZlTELabXx3entBiO1dsK-lb0N5rA-vicSO72UHvA2UVtqk3PkXd_mTCNFp6L6WYZJMneQvRbATdvJ9akum8fkMicd-R3bUamW0hjSFtOpu_uGMH4UPNuLhitUga-EpI35TljMST6hQfl4449Y0DkDCk59UN9OMrrrY4pvUCdIX2K6nNX5vhJBebhW6eZdtzB--dLs-Q
+
+{
+    "name": "asd",
+    "description": "Jotain"
+}

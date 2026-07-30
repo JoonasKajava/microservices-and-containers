@@ -2,7 +2,7 @@
 .devenv*
 devenv.local.nix
 devenv.local.yaml
-
+dev
 # direnv
 .direnv
 
@@ -10,3 +10,7 @@ devenv.local.yaml
 .pre-commit-config.yaml
 
 target/
+.idea
+tinyauth_data
+pocket-id
+.env

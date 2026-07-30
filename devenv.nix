@@ -10,7 +10,11 @@
 
   env.INVENTORY_ADDR = "http://localhost:3000";
   env.VITE_INVENTORY_ADDR = env.INVENTORY_ADDR;
-  env.DATABASE_URL = "postgres://diesel@localhost/equipment_reservation";
+
+  env.VITE_OIDC_AUTHORITY = "https://auth.equipment.localhost";
+  env.VITE_OIDC_CLIENT_ID = "420a32cb-5100-4bee-b770-e273e059e326";
+  env.VITE_OIDC_REDIRECT_URI = "https://equipment.localhost";
+  env.DATABASE_URL = "postgres://admin@localhost/equipment_reservation";
 
   # https://devenv.sh/packages/
   packages = with pkgs; [
@@ -18,7 +22,7 @@
     openssl
     cargo-tarpaulin
     shadcn
-    diesel-cli
+    sea-orm-cli
   ];
 
   # https://devenv.sh/languages/
@@ -37,33 +41,6 @@
       exec = "npm run dev";
       cwd = "./equipment-reservation-ui/";
     };
-    inventory = {
-      exec = "cargo run";
-      restart = {
-        on = "always";
-        max = null;
-      };
-      watch = {
-        paths = [./inventory];
-        extensions = ["rs" "toml"];
-        ignore = ["target" "*.log"];
-      };
-      cwd = "./inventory/";
-    };
-
-    reservation = {
-      exec = "cargo run";
-      restart = {
-        on = "always";
-        max = null;
-      };
-      watch = {
-        paths = [./reservation];
-        extensions = ["rs" "toml"];
-        ignore = ["target" "*.log"];
-      };
-      cwd = "./reservation/";
-    };
   };
 
   # https://devenv.sh/processes/
@@ -76,8 +53,12 @@
       enable = true;
       initialDatabases = [
         {
-          name = "equipment_reservation";
-          user = "diesel";
+          name = "inventory";
+          user = "admin";
+        }
+        {
+          name = "reservation";
+          user = "admin";
         }
       ];
     };
@@ -92,8 +73,12 @@
       virtualHosts = {
         "localhost:8080" = {
           extraConfig = ''
-            handle /api/* {
-              reverse_proxy localhost:3000
+            handle /api/v1/equipment* {
+              reverse_proxy localhost:5058
+            }
+
+            handle /api/v1/reservation* {
+              reverse_proxy localhost:5264
             }
             handle {
               reverse_proxy localhost:5173

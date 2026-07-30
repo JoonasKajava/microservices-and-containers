@@ -1,16 +1,33 @@
 import {
+  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
-  isRouteErrorResponse,
 } from "react-router"
+
+import { App as AntdApp, Space } from "antd"
 
 import type { Route } from "./+types/root"
 import "./app.css"
-import "./typeset.css"
-import { Toaster } from "sonner"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import Container from "~/components/ui/container"
+import { AuthProvider, type AuthProviderProps } from "react-oidc-context"
+import Profile from "~/components/widgets/profile"
+import AuthGuard from "~/components/widgets/auth-guard"
+import { WebStorageStateStore } from "oidc-client-ts"
+
+const queryClient = new QueryClient()
+
+const oidcConfig = {
+  authority: import.meta.env.VITE_OIDC_AUTHORITY,
+  client_id: import.meta.env.VITE_OIDC_CLIENT_ID,
+  redirect_uri: import.meta.env.VITE_OIDC_REDIRECT_URI,
+  response_type: "code",
+  scope: "openid profile email",
+  disablePKCE: false,
+} satisfies AuthProviderProps
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -18,16 +35,35 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Equipment Reservation</title>
         <Meta />
         <Links />
       </head>
       <body>
-        {children}
-        <Toaster />
-        <ScrollRestoration />
-        <Scripts />
+        <AuthProvider {...oidcConfig}>
+          <Wrapper>{children}</Wrapper>
+        </AuthProvider>
       </body>
     </html>
+  )
+}
+
+const Wrapper = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <AntdApp>
+      <QueryClientProvider client={queryClient}>
+        <Container>
+          <AuthGuard>
+            <Space orientation="vertical">
+              <Profile />
+              {children}
+            </Space>
+          </AuthGuard>
+        </Container>
+        <ScrollRestoration />
+        <Scripts />
+      </QueryClientProvider>
+    </AntdApp>
   )
 }
 

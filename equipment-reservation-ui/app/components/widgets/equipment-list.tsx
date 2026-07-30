@@ -1,91 +1,70 @@
-import { useAsync } from "react-use"
-import inventoryRepository from "~/lib/repositories/inventoryRepository"
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemTitle,
-} from "../ui/item"
-import { Skeleton } from "../ui/skeleton"
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "../ui/empty"
-import { BookDashed } from "lucide-react"
-import { useEffect } from "react"
-import { Button } from "../ui/button"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { NavLink } from "react-router"
+import SimpleError from "~/components/widgets/SimpleError"
+import { Button, Empty, List } from "antd"
+import { useInventoryRepository } from "~/lib/hooks/useInventoryRepository"
+import { useAuth } from "react-oidc-context"
 
 export default function EquipmentList() {
-  const equipmentReadState = useAsync(inventoryRepository.readEquipment)
+  const queryClient = useQueryClient()
 
-  if (equipmentReadState.loading) {
+  const auth = useAuth()
+
+  const inventoryRepository = useInventoryRepository(auth.user?.access_token!)
+
+  const equipmentQuery = useQuery({
+    queryKey: ["equipment"],
+    queryFn: inventoryRepository.readEquipment,
+  })
+
+  const deleteEquipmentMutation = useMutation({
+    mutationFn: inventoryRepository.deleteEquipment,
+    onSuccess: () => {
+      queryClient
+        .invalidateQueries({ queryKey: ["equipment"] })
+        .catch((e) => console.error(e))
+    },
+  })
+
+  if (equipmentQuery.data && equipmentQuery.data.length < 1) {
+    return <Empty />
+  } else if (equipmentQuery.isError) {
     return (
-      <section className="flex flex-col gap-4">
-        {[...Array(3)].map((_, i) => (
-          <Item key={i} variant="outline">
-            <ItemContent>
-              <ItemTitle>
-                <Skeleton className="h-6 w-[250px]" />
-              </ItemTitle>
-              <div className="flex flex-col gap-2">
-                <Skeleton className="h-3 w-[300px]" />
-                <Skeleton className="h-3 w-[300px]" />
-                <Skeleton className="h-3 w-[100px]" />
-              </div>
-            </ItemContent>
-            <ItemActions>
-              <Skeleton className="h-6 w-[50px]" />
-            </ItemActions>
-          </Item>
-        ))}
-      </section>
-    )
-  } else if (equipmentReadState.value && equipmentReadState.value.length < 1) {
-    return (
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <BookDashed />
-          </EmptyMedia>
-          <EmptyTitle>No data</EmptyTitle>
-          <EmptyDescription>No data found</EmptyDescription>
-        </EmptyHeader>
-      </Empty>
-    )
-  } else if (equipmentReadState.error !== undefined) {
-    return (
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <BookDashed />
-          </EmptyMedia>
-          <EmptyTitle>Issue getting equipment list</EmptyTitle>
-          <EmptyDescription>
-            {equipmentReadState.error.toString()}
-          </EmptyDescription>
-        </EmptyHeader>
-      </Empty>
+      <SimpleError
+        title="Issue getting equipment list"
+        description={equipmentQuery.error.message}
+      />
     )
   } else {
     return (
       <section className="flex flex-col gap-4">
-        {equipmentReadState.value?.map((value) => (
-          <Item key={value.name} variant="outline">
-            <ItemContent>
-              <ItemTitle>{value.name}</ItemTitle>
-              <ItemDescription className="flex flex-col gap-2">
-                {value.description}
-              </ItemDescription>
-            </ItemContent>
-            <ItemActions>
-              <Button>Reserve</Button>
-            </ItemActions>
-          </Item>
-        ))}
+        <List
+          loading={equipmentQuery.isPending}
+          itemLayout="horizontal"
+          dataSource={equipmentQuery.data}
+          renderItem={(item) => (
+            <List.Item
+              actions={[
+                <NavLink to={`/view-equipment/${item.equipmentId}`}>
+                  <Button>View</Button>
+                </NavLink>,
+                <Button
+                  disabled={deleteEquipmentMutation.isPending}
+                  onClick={() =>
+                    deleteEquipmentMutation.mutate(item.equipmentId)
+                  }
+                >
+                  Delete
+                </Button>,
+              ]}
+            >
+              <List.Item.Meta
+                title={item.name}
+                description={item.description}
+              />
+            </List.Item>
+          )}
+        />
       </section>
     )
   }
