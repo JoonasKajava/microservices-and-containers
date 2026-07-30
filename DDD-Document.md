@@ -12,25 +12,32 @@ Equipment reservation domain
 
 Same as subdomains:
 
-### Equipment Context
+- Equipment Context
+- Reservation Context
+- Account Context
 
-Is responsible for managing equipment.
+## Microservices
 
+### Inventory Service
+
+Is responsible for equipment context.
+
+- Equipment Availability
 - Adding equipment to the system.
 - Removing equipment from system.
 - Handles information regarding equipment.
 
-### Reservation Context
+### Reservation Service
 
-Is responsible for managing reservations.
+Is responsible for reservation context.
 
 - Reserving equipment.
 - Cancelling reservation.
 - Handles information regarding reservations.
 
-### Account context
+### Account Service
 
-Is responsible for managing users.
+Is responsible for account context.
 
 - Authentication.
 - Registration.
@@ -45,7 +52,7 @@ Is responsible for managing users.
 
 - Equipment
 - Reservation
-- Employee
+- User
 
 ## Aggregates
 
@@ -58,7 +65,7 @@ classDiagram
             +ReservationId
             +EquipmentId
             +TimeSpan
-            +ReservedBy
+            +ReservedByUserId
         }
     }
 
@@ -68,7 +75,7 @@ classDiagram
             +EquipmentId
             +Name
             +Description
-            +Creator
+            +CreatorUserId
         }
     }
 

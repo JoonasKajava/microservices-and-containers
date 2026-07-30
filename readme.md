@@ -1,5 +1,11 @@
 # Equipment Reservation System
 
+## Links
+
+- [Data communication structures](./Data-communication-structures.md)
+- [DDD Documentation](./DDD-Document.md)
+- [Testing Plan](./Testing-plan.md)
+
 
 ## Diagram
 
@@ -42,16 +48,17 @@ classDiagram
 
   UI --> Caddy : Api Requests
 
-  Caddy --> Reservation
-  Caddy --> Inventory
-  Caddy --> PocketId
-  Caddy --> Aspire
+  Caddy --> Reservation : REST API
+  Caddy --> Inventory : REST API
+  Caddy --> PocketId : Authentication
+  Caddy --> Aspire : Dashboard
 
   Reservation --> Aspire : OpenTelemetry
   Inventory --> Aspire : OpenTelemetry
 
   Inventory --> Reservation : Delete Event
   Reservation --> Inventory : Request Equipment Info
+  Reservation --> Inventory : Status Change Events 
 
   InventoryDB --> Inventory
   ReservationDB --> Reservation

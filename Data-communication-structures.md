@@ -1,6 +1,6 @@
 # Workflow
 
-The system mostly uses choreography workflow pattern with single synchronous request-response process.
+The system uses choreography and orchestration workflow patterns.
 
 
 ```mermaid
@@ -20,6 +20,7 @@ sequenceDiagram
     Reservation ->> Inventory: ReservationStartedEvent
     Reservation ->> Inventory: ReservationReturnedEvent
 
+    note over UI,Inventory: All requests made from UI are authenticated by Account Service
 ```
 
 

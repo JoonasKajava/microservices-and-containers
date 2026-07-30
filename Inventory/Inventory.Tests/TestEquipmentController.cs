@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text;
 using Inventory.Contracts;
+using Inventory.Entities;
 using Inventory.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
@@ -85,7 +86,8 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             .ReturnsAsync(new Entities.Equipment
             {
                 Creator = "Test",
-                Name = "Laptop"
+                Name = "Laptop",
+                Availability = EquipmentAvailability.Available
             });
 
         builder.ConfigureServices(services =>
