@@ -1,0 +1,21 @@
+services:
+  inventory:
+    networks:
+      - internal
+    build:
+      context: ./Inventory/Inventory
+      dockerfile: Dockerfile
+  reservation:
+    networks:
+      - internal
+    build:
+      context: ./Reservation/Reservation
+      dockerfile: Dockerfile
+    environment:
+      Reservation__InventorySubAddr: tcp://inventory:5556
+networks:
+  internal:
+    driver: bridge
+    internal: true
+  public:
+    driver: bridge
